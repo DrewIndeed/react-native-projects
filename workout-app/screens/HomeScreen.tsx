@@ -1,9 +1,10 @@
-import { View, Text } from 'react-native';
+import { View, Text, Button } from 'react-native';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}: any) => {
   return (
     <View>
       <Text>HomeScreen</Text>
+      <Button title="Go to Planner" onPress={() => navigation.push("Planner")}/>
     </View>
   );
 };
