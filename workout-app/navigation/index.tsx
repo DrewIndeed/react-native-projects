@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
 import PlannerScreen from '../screens/PlannerScreen';
+import { FontAwesome, Entypo } from '@expo/vector-icons';
 
 export default function Navigation() {
   return (
@@ -32,12 +33,22 @@ const BottomTabNavigator = () => (
       component={HomeScreen}
       // unmountOnBlur to unmount other page in nav when jump to another page
       // print out msg in useEffect of the screens to see if needed
-      options={{ unmountOnBlur: true }}
+      options={{
+        unmountOnBlur: true,
+        tabBarIcon: ({ color, size }) => (
+          <FontAwesome name="home" size={size} color={color} />
+        ),
+      }}
     />
     <BottomTab.Screen
       name="Planner"
       component={PlannerScreen}
-      options={{ unmountOnBlur: true }}
+      options={{
+        unmountOnBlur: true,
+        tabBarIcon: ({ color, size }) => (
+          <Entypo name="add-to-list" size={size} color={color} />
+        ),
+      }}
     />
   </BottomTab.Navigator>
 );
