@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { View, Text, StyleSheet, Modal as NativeModal } from 'react-native';
 import PressableText from './PressableText';
 
+type ModalProps = {
+  // ? makes activator an optional parameter
+  activator?: FunctionComponent<{
+    handleOpen: () => void;
+  }>;
+};
+
 // Activator is just a HAVE NOT IMPLEMENTED name
-const CustomModal = ({ activator: Activator }: any) => {
+const CustomModal = ({ activator: Activator }: ModalProps) => {
   const [isModalVisible, setModalVisible] = useState(false);
   return (
     <View>
@@ -18,7 +25,7 @@ const CustomModal = ({ activator: Activator }: any) => {
         </View>
       </NativeModal>
       {Activator ? (
-        <Activator />
+        <Activator handleOpen={() => setModalVisible(true)} />
       ) : (
         <PressableText
           onPress={() => setModalVisible(true)}

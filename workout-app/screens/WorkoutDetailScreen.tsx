@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import useWorkoutBySlug from '../hooks/useWorkoutBySlug';
 import CustomModal from '../components/styled/CustomModal';
@@ -31,8 +31,14 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
             onPress={() => {
               alert('Opening');
             }}
-            text="Check Sequence"
+            text="Alert Open Test"
           />
+        )}
+      />
+
+      <CustomModal
+        activator={({ handleOpen }) => (
+          <Button onPress={handleOpen} title="Test Button Text" />
         )}
       />
 
