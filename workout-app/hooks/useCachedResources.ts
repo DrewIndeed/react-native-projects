@@ -8,18 +8,14 @@ const useCachedResources = () => {
   useEffect(() => {
     async function loadResourcesAndDataAsunc() {
       try {
-        await clearWorkouts();
         await initWorkouts();
         await Font.loadAsync({
-          'montserrat': require('../assets/fonts/Montserrat-Regular.ttf'),
+          montserrat: require('../assets/fonts/Montserrat-Regular.ttf'),
           'montserrat-bold': require('../assets/fonts/Montserrat-Bold.ttf'),
         });
       } catch (error) {
         console.warn(error);
       } finally {
-        const workoutData = await getWorkouts();
-        console.log('workout-data:', workoutData);
-
         setIsLoadingComplete(true);
       }
     }

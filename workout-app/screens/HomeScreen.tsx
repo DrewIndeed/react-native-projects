@@ -1,19 +1,32 @@
 import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
-import data from '../data.json';
 import { Workout } from '../types/data';
 import WorkoutItem from '../components/WorkoutItem';
 // import MontserratText from '../components/styled/MontserratText';
+import { getWorkouts } from '../storage/workout';
+import { useState, useEffect } from 'react';
 
-const PressableWorkoutItem = ({ item }: { item: Workout }) => {
-  return (
-    <Pressable onPress={() => alert(`I am - ${item.name}`)}>
-      <WorkoutItem item={item} />
-    </Pressable>
-  );
-};
+// CREATE PRESSABLE WORKOUT ITEM AS A SEPERATED COMPONENT
+// const PressableWorkoutItem = ({ item }: { item: Workout }) => {
+//   return (
+//     <Pressable onPress={() => alert(`I am - ${item.name}`)}>
+//       <WorkoutItem item={item} />
+//     </Pressable>
+//   );
+// };
 
 const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
+  const [workouts, setWorkouts] = useState<Workout[]>([]); // if not specified, [] in useState will have type of 'never[]'
+
+  useEffect(() => {
+    async function getWorkoutDataFromAsyncStorage() {
+      const _workouts = await getWorkouts();
+      await setWorkouts(_workouts);
+    }
+
+    getWorkoutDataFromAsyncStorage();
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Your Workouts</Text>
@@ -22,7 +35,7 @@ const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
         // data here is the WHOLE ARRAY OF OBJECTS
         // data is read from a JSON file so dont know what tah hell is the tpye
         // so we need to specify which type of array it is
-        data={data as Workout[]}
+        data={workouts}
         keyExtractor={(item) => item.slug} // key attribute when you render a list in React
         // WRITE INLINE WAY
         // renderItem={(
