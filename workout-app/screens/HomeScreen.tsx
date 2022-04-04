@@ -36,7 +36,12 @@ const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
 
         renderItem={({ item }) => {
           return (
-            <Pressable onPress={() => navigation.navigate('WorkoutDetails')}>
+            <Pressable
+              onPress={() =>
+                // the second argument is called the PARAMS
+                navigation.navigate('WorkoutDetails', { slug: item.slug })
+              }
+            >
               <WorkoutItem item={item} />
             </Pressable>
           );
