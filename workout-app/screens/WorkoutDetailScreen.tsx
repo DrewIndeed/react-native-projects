@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Modal } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import useWorkoutBySlug from '../hooks/useWorkoutBySlug';
 import PressableText from '../components/styled/PressableText';
+import { useState } from 'react';
 
 type NavigateParams = {
   route: {
@@ -14,15 +15,26 @@ type NavigateParams = {
 type DetailNavigation = NativeStackHeaderProps & NavigateParams;
 
 const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
+  // if you place this line below useWorkoutBySlug(), there will be an error: the hook is renderred more time than the previous render
+  const [isModalVisible, setModalVisible] = useState(false);
+
   const workoutBySlug = useWorkoutBySlug(route.params.slug);
-  if (workoutBySlug === undefined) return null;
+  if (!workoutBySlug) return null;
 
   return (
     <View style={styles.container}>
       {/* use ? because workoutBySlug might be undefined */}
       <Text style={styles.header}>{workoutBySlug.name}</Text>
-      <PressableText onPress={() => alert('Modal 1')} text="Check Sequence" />
-      <PressableText onPress={() => alert('Modal 2')} text="Check Sequence 2" />
+      <PressableText
+        onPress={() => setModalVisible(true)}
+        text="Check Sequence"
+      />
+      <Modal visible={isModalVisible} transparent={false} animationType="fade">
+        <View style={styles.centerView}>
+          <Text>Hello from Modal!</Text>
+          <PressableText onPress={() => setModalVisible(false)} text="Close" />
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -36,6 +48,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 20,
     fontWeight: 'bold',
+  },
+  centerView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
