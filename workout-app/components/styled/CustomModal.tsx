@@ -7,10 +7,11 @@ type ModalProps = {
   activator?: FunctionComponent<{
     handleOpen: () => void;
   }>;
+  children: React.ReactNode;
 };
 
 // Activator is just a HAVE NOT IMPLEMENTED name
-const CustomModal = ({ activator: Activator }: ModalProps) => {
+const CustomModal = ({ activator: Activator, children }: ModalProps) => {
   const [isModalVisible, setModalVisible] = useState(false);
   return (
     <View>
@@ -20,7 +21,7 @@ const CustomModal = ({ activator: Activator }: ModalProps) => {
         animationType="fade"
       >
         <View style={styles.centerView}>
-          <Text>Hello from Modal!</Text>
+          {children}
           <PressableText onPress={() => setModalVisible(false)} text="Close" />
         </View>
       </NativeModal>

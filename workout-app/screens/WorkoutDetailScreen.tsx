@@ -26,24 +26,25 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
       {/* use ? because workoutBySlug might be undefined */}
       <Text style={styles.header}>{workoutBySlug.name}</Text>
       <CustomModal
-        activator={() => (
-          <PressableText
-            onPress={() => {
-              alert('Opening');
-            }}
-            text="Alert Open Test"
-          />
+        activator={({ handleOpen }) => (
+          <PressableText onPress={handleOpen} text="Custom Open 1" />
         )}
-      />
+      >
+        <Text>Modal 1 Test Text</Text>
+      </CustomModal>
 
       <CustomModal
         activator={({ handleOpen }) => (
-          <Button onPress={handleOpen} title="Test Button Text" />
+          <Button onPress={handleOpen} title="Custom Open 2" />
         )}
-      />
+      >
+        <Text>Modal 2 Test Text</Text>
+      </CustomModal>
 
       {/* render another one to see the difference */}
-      <CustomModal />
+      <CustomModal>
+        <Text>Modal 3 Test Text</Text>
+      </CustomModal>
     </View>
   );
 };
