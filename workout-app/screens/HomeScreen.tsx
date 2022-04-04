@@ -1,10 +1,8 @@
 import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
-import { Workout } from '../types/data';
 import WorkoutItem from '../components/WorkoutItem';
+import { useWorkouts } from '../hooks/useWorkouts';
 // import MontserratText from '../components/styled/MontserratText';
-import { getWorkouts } from '../storage/workout';
-import { useState, useEffect } from 'react';
 
 // CREATE PRESSABLE WORKOUT ITEM AS A SEPERATED COMPONENT
 // const PressableWorkoutItem = ({ item }: { item: Workout }) => {
@@ -16,16 +14,7 @@ import { useState, useEffect } from 'react';
 // };
 
 const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
-  const [workouts, setWorkouts] = useState<Workout[]>([]); // if not specified, [] in useState will have type of 'never[]'
-
-  useEffect(() => {
-    async function getWorkoutDataFromAsyncStorage() {
-      const _workouts = await getWorkouts();
-      await setWorkouts(_workouts);
-    }
-
-    getWorkoutDataFromAsyncStorage();
-  }, []);
+  const workouts = useWorkouts();
 
   return (
     <View style={styles.container}>
