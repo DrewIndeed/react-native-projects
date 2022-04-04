@@ -7,7 +7,6 @@ import WorkoutItem from '../components/WorkoutItem';
 const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
   return (
     <View style={styles.container}>
-      <Text>HomeScreen</Text>
       <FlatList
         // data here is the WHOLE ARRAY OF OBJECTS
         // data is read from a JSON file so dont know what tah hell is the tpye
