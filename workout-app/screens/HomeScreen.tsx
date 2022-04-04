@@ -9,7 +9,7 @@ const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Your Workouts</Text>
-      <MontserratText style={{ fontSize: 30 }}>Your Workouts</MontserratText>
+      {/* <MontserratText style={{ fontSize: 30 }}>Your Workouts</MontserratText> */}
       <FlatList
         // data here is the WHOLE ARRAY OF OBJECTS
         // data is read from a JSON file so dont know what tah hell is the tpye
