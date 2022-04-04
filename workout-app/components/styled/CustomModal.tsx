@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal as NativeModal } from 'react-native';
 import PressableText from './PressableText';
 
-const CustomModal = () => {
+// Activator is just a HAVE NOT IMPLEMENTED name
+const CustomModal = ({ activator: Activator }: any) => {
   const [isModalVisible, setModalVisible] = useState(false);
   return (
     <View>
@@ -16,10 +17,14 @@ const CustomModal = () => {
           <PressableText onPress={() => setModalVisible(false)} text="Close" />
         </View>
       </NativeModal>
-      <PressableText
-        onPress={() => setModalVisible(true)}
-        text="Check Sequence"
-      />
+      {Activator ? (
+        <Activator />
+      ) : (
+        <PressableText
+          onPress={() => setModalVisible(true)}
+          text="Default Open Text"
+        />
+      )}
     </View>
   );
 };

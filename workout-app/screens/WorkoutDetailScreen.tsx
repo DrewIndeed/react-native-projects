@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import useWorkoutBySlug from '../hooks/useWorkoutBySlug';
 import CustomModal from '../components/styled/CustomModal';
+import PressableText from '../components/styled/PressableText';
 
 type NavigateParams = {
   route: {
@@ -24,6 +25,18 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
     <View style={styles.container}>
       {/* use ? because workoutBySlug might be undefined */}
       <Text style={styles.header}>{workoutBySlug.name}</Text>
+      <CustomModal
+        activator={() => (
+          <PressableText
+            onPress={() => {
+              alert('Opening');
+            }}
+            text="Check Sequence"
+          />
+        )}
+      />
+
+      {/* render another one to see the difference */}
       <CustomModal />
     </View>
   );
