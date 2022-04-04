@@ -1,21 +1,26 @@
 import { useState, useEffect } from 'react';
+import * as Font from 'expo-font';
 
 const useCachedResources = () => {
   const [isLoadingComplete, setIsLoadingComplete] = useState(false);
 
   useEffect(() => {
-    console.log('Execute useEffect');
-    function loadResourcesAndDataAsunc() {
-      setTimeout(() => {
-        console.log('Set isLoading to true ');
+    async function loadResourcesAndDataAsunc() {
+      try {
+        await Font.loadAsync({
+          montserrat: require('../assets/fonts/Montserrat-Regular.ttf'),
+          'montserrat-bold': require('../assets/fonts/Montserrat-Bold.ttf'),
+        });
+      } catch (error) {
+        console.warn(error);
+      } finally {
         setIsLoadingComplete(true);
-      }, 3000);
+      }
     }
 
     loadResourcesAndDataAsunc();
   }, []);
 
-  console.log('Returning:', isLoadingComplete);
   return isLoadingComplete;
 };
 

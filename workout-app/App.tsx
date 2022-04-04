@@ -4,7 +4,7 @@ import useCachedResources from './hooks/useCachedResources';
 
 export default function App() {
   const isLoaded = useCachedResources();
-  console.log("At App:", isLoaded);
+  console.log('isLoaded:', isLoaded);
 
   return (
     <>
