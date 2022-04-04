@@ -30,11 +30,17 @@ const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
         // ) => (
         //   <View>
         //     {/* render items name here */}
-        //     <Text>{item.name}</Text>
+        //     <Text>{item.name}</Text>s
         //   </View>
         // )}
 
-        renderItem={PressableWorkoutItem}
+        renderItem={({ item }) => {
+          return (
+            <Pressable onPress={() => navigation.navigate('WorkoutDetails')}>
+              <WorkoutItem item={item} />
+            </Pressable>
+          );
+        }}
       />
     </View>
   );

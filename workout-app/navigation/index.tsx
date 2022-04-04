@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
 import PlannerScreen from '../screens/PlannerScreen';
 import { FontAwesome, Entypo } from '@expo/vector-icons';
+import WorkoutDetailScreen from '../screens/WorkoutDetailScreen';
 
 export default function Navigation() {
   return (
@@ -21,6 +22,10 @@ const RootNavigator = () => (
       component={BottomTabNavigator}
       // headerShown to false to hide to header part
       options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="WorkoutDetails"
+      component={WorkoutDetailScreen}
     />
   </Stack.Navigator>
 );

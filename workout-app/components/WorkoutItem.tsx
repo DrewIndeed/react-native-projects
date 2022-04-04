@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Workout } from '../types/data';
 import { secToMin, formatSec } from '../utils/time';
 
-export default function renderItem({ item }: { item: Workout }) {
+export default function WorkoutItem({ item }: { item: Workout }) {
   return (
     <View style={styles.container}>
       <Text style={styles.name}>{item.name}</Text>
