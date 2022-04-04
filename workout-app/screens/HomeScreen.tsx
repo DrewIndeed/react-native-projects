@@ -8,6 +8,7 @@ const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Your Workouts</Text>
+      <Text style={styles.header2}>Your Workouts</Text>
       <FlatList
         // data here is the WHOLE ARRAY OF OBJECTS
         // data is read from a JSON file so dont know what tah hell is the tpye
@@ -39,6 +40,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 20,
     fontWeight: 'bold',
+  },
+  header2: {
+    fontSize: 20,
+    marginBottom: 20,
+    fontWeight: 'bold',
+    fontFamily: 'montserrat-bold'
   },
 });
 
