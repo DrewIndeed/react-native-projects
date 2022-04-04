@@ -1,9 +1,17 @@
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import data from '../data.json';
 import { Workout } from '../types/data';
 import WorkoutItem from '../components/WorkoutItem';
-import MontserratText from '../components/styled/MontserratText';
+// import MontserratText from '../components/styled/MontserratText';
+
+const PressableWorkoutItem = ({ item }: { item: Workout }) => {
+  return (
+    <Pressable onPress={() => alert(`I am - ${item.name}`)}>
+      <WorkoutItem item={item} />
+    </Pressable>
+  );
+};
 
 const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
   return (
@@ -26,7 +34,7 @@ const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
         //   </View>
         // )}
 
-        renderItem={WorkoutItem}
+        renderItem={PressableWorkoutItem}
       />
     </View>
   );
