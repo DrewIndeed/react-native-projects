@@ -26,6 +26,7 @@ const RootNavigator = () => (
     <Stack.Screen
       name="WorkoutDetails"
       component={WorkoutDetailScreen}
+      options={{ title: 'Workout Info' }}
     />
   </Stack.Navigator>
 );
