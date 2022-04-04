@@ -33,7 +33,7 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
       >
         <View>
           {workoutBySlug.sequence.map((sqItem) => (
-            <Text>
+            <Text key={sqItem.slug}>
               {sqItem.name} - {sqItem.type} - {formatSec(sqItem.duration)}
             </Text>
           ))}
