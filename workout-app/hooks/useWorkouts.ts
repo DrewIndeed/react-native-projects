@@ -15,7 +15,7 @@ export const useWorkouts = () => {
     }
 
     if (isFocused) getWorkoutDataFromAsyncStorage();
-  }, []);
+  }, [isFocused]);
 
   return workouts;
 };

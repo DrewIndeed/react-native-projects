@@ -11,6 +11,12 @@ export const initWorkouts = async (): Promise<boolean> => {
   return false;
 };
 
+export const getWorkoutBySlug = async (slug: string) => {
+  const allData = await getWorkouts();
+  const workoutBySlugData = allData.filter((item) => item.slug === slug)[0];
+  return workoutBySlugData;
+};
+
 export const getWorkouts = async (): Promise<Workout[]> =>
   await getData('workout-data');
 
