@@ -3,6 +3,7 @@ import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import useWorkoutBySlug from '../hooks/useWorkoutBySlug';
 import CustomModal from '../components/styled/CustomModal';
 import PressableText from '../components/styled/PressableText';
+import { formatSec } from '../utils/time';
 
 type NavigateParams = {
   route: {
@@ -27,23 +28,16 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
       <Text style={styles.header}>{workoutBySlug.name}</Text>
       <CustomModal
         activator={({ handleOpen }) => (
-          <PressableText onPress={handleOpen} text="Custom Open 1" />
+          <PressableText onPress={handleOpen} text="Check Sequence" />
         )}
       >
-        <Text>Modal 1 Test Text</Text>
-      </CustomModal>
-
-      <CustomModal
-        activator={({ handleOpen }) => (
-          <Button onPress={handleOpen} title="Custom Open 2" />
-        )}
-      >
-        <Text>Modal 2 Test Text</Text>
-      </CustomModal>
-
-      {/* render another one to see the difference */}
-      <CustomModal>
-        <Text>Modal 3 Test Text</Text>
+        <View>
+          {workoutBySlug.sequence.map((sqItem) => (
+            <Text>
+              {sqItem.name} - {sqItem.type} - {formatSec(sqItem.duration)}
+            </Text>
+          ))}
+        </View>
       </CustomModal>
     </View>
   );
