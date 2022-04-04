@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import useWorkoutBySlug from '../hooks/useWorkoutBySlug';
 import CustomModal from '../components/styled/CustomModal';
 import PressableText from '../components/styled/PressableText';
 import { formatSec } from '../utils/time';
+import { FontAwesome } from '@expo/vector-icons';
 
 type NavigateParams = {
   route: {
@@ -32,10 +33,15 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
         )}
       >
         <View>
-          {workoutBySlug.sequence.map((sqItem) => (
-            <Text key={sqItem.slug}>
-              {sqItem.name} - {sqItem.type} - {formatSec(sqItem.duration)}
-            </Text>
+          {workoutBySlug.sequence.map((sqItem, idx) => (
+            <View key={sqItem.slug} style={styles.sequenceItem}>
+              <Text>
+                {sqItem.name} - {sqItem.type} - {formatSec(sqItem.duration)}
+              </Text>
+              {idx !== workoutBySlug.sequence.length - 1 && (
+                <FontAwesome name="arrow-down" size={20} />
+              )}
+            </View>
           ))}
         </View>
       </CustomModal>
@@ -56,6 +62,9 @@ const styles = StyleSheet.create({
   centerView: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sequenceItem: {
     alignItems: 'center',
   },
 });

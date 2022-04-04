@@ -21,7 +21,7 @@ const CustomModal = ({ activator: Activator, children }: ModalProps) => {
         animationType="fade"
       >
         <View style={styles.centerView}>
-          {children}
+          <View style={styles.contentView}>{children}</View>
           <PressableText onPress={() => setModalVisible(false)} text="Close" />
         </View>
       </NativeModal>
@@ -42,6 +42,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  contentView: {
+    marginBottom: 20,
   },
 });
 
