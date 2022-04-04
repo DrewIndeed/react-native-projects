@@ -21,6 +21,6 @@ export interface SequenceItem {
   type: SequenceType;
   duration: number;
 
-  // '?': because some exercise don't have its
+  // '?': because some exercise don't have reps
   reps?: number;
 }

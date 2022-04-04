@@ -2,12 +2,7 @@ import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import data from '../data.json';
 import { Workout } from '../types/data';
-
-const renderItem = ({ item }: { item: Workout }) => (
-  <View>
-    <Text>{item.name}</Text>
-  </View>
-);
+import WorkoutItem from '../components/WorkoutItem';
 
 const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
   return (
@@ -18,7 +13,7 @@ const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
         // data is read from a JSON file so dont know what tah hell is the tpye
         // so we need to specify which type of array it is
         data={data as Workout[]}
-        keyExtractor={(item) => item.slug} // key attribiute when you render a list in Reacr
+        keyExtractor={(item) => item.slug} // key attribute when you render a list in React
         // WRITE INLINE WAY
         // renderItem={(
         //   { item } // remember to deconstruct "item"
@@ -29,7 +24,7 @@ const HomeScreen = ({ navigation }: NativeStackHeaderProps) => {
         //   </View>
         // )}
 
-        renderItem={renderItem}
+        renderItem={WorkoutItem}
       />
     </View>
   );
