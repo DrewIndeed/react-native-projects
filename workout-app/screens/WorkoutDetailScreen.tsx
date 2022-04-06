@@ -5,9 +5,10 @@ import CustomModal from '../components/styled/CustomModal';
 import PressableText from '../components/styled/PressableText';
 import { formatSec } from '../utils/time';
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import WorkoutItem from '../components/WorkoutItem';
 import { SequenceItem } from '../types/data';
+import { useCountDown } from '../hooks/useCountDown';
 
 type NavigateParams = {
   route: {
@@ -29,38 +30,15 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
   // state to keep track of sequence belonging to that particular workout
   const [sequence, setSequence] = useState<SequenceItem[]>([]);
 
-  // state to keep track of duration count down of workout sequence ITEM
-  /* use -1 because:
-  + It is safe when it is use to access an array or something because index of array start at 0 and
-  + It indicates null state of counting 
-  */
-  const [currentDuration, setCurrentDuration] = useState(-1);
-
   // state to keep track of current index of current sequence item
   const [idxTracker, setIdxTracker] = useState(-1);
 
-  // ! useEffect here right after all init of useState or other init variables
-  useEffect(() => {
-    // if there is no item in the sequence array, do nothing
-    if (idxTracker === -1) return;
-
-    // otherwise, keep track of duration of current item in sequence
-    setCurrentDuration(workoutBySlug!.sequence[idxTracker].duration);
-
-    // use tracking duration to count down
-    const intervalId = window.setInterval(() => {
-      // update by decrementing currentDuration
-      // here, we use the functional form of use state content
-      setCurrentDuration((curDur) => {
-        console.log(curDur);
-        return curDur - 1;
-      });
-    }, 100);
-
-    // IMPORTANT: need to remove it when done using, otherwise, memory leak when it keeps counting down
-    // this is also called Cleaning
-    return () => window.clearInterval(intervalId);
-  }, [idxTracker]); // it will depend on idxTracker
+  // useCountDown hook usage
+  const countDown = useCountDown(
+    idxTracker,
+    // if idx is the valid array index (starting from 0), return duration otherwise -1
+    idxTracker >= 0 ? sequence[idxTracker].duration : -1
+  );
 
   // method to add item to sequence
   const addItemToSequence = (idx: number) => {
