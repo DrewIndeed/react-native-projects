@@ -22,60 +22,64 @@ const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
   return (
     <View style={styles.container}>
       <Text>Exercise Form</Text>
-      <Controller
-        control={control}
-        rules={{ required: true }}
-        name="name"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            onChangeText={onChange}
-            value={value}
-            style={styles.input}
-            placeholder="Name"
-          />
-        )}
-      />
+      <View style={styles.rowContainer}>
+        <Controller
+          control={control}
+          rules={{ required: true }}
+          name="name"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+              placeholder="Name"
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        rules={{ required: true }}
-        name="duration"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            onChangeText={onChange}
-            value={value}
-            style={styles.input}
-            placeholder="Duration"
-          />
-        )}
-      />
+        <Controller
+          control={control}
+          rules={{ required: true }}
+          name="duration"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+              placeholder="Duration"
+            />
+          )}
+        />
+      </View>
 
-      <Controller
-        control={control}
-        name="reps"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            onChangeText={onChange}
-            value={value}
-            style={styles.input}
-            placeholder="Repetitions"
-          />
-        )}
-      />
+      <View style={styles.rowContainer}>
+        <Controller
+          control={control}
+          name="reps"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+              placeholder="Repetitions"
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        rules={{ required: true }}
-        name="type"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            onChangeText={onChange}
-            value={value}
-            style={styles.input}
-            placeholder="Type"
-          />
-        )}
-      />
+        <Controller
+          control={control}
+          rules={{ required: true }}
+          name="type"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+              placeholder="Type"
+            />
+          )}
+        />
+      </View>
 
       <PressableText
         text="Submit"
@@ -92,12 +96,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   input: {
+    flex: 1,
     height: 35,
     margin: 10,
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.4)',
     borderRadius: 5,
     padding: 10,
+  },
+  rowContainer: {
+    flexDirection: 'row',
   },
 });
 
