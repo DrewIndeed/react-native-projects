@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
+import PressableText from './styled/PressableText';
 
 // type for submit form information
 export type WorkoutFormSubmit = {
@@ -14,7 +15,7 @@ type WorkoutFormProps = {
 };
 
 const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
-  const { control } = useForm();
+  const { control, handleSubmit } = useForm();
 
   return (
     <View style={styles.container}>
@@ -30,6 +31,24 @@ const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
             style={styles.input}
           />
         )}
+      />
+
+      <Controller
+        control={control}
+        rules={{ required: true }}
+        name="duration"
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            onChangeText={onChange}
+            value={value}
+            style={styles.input}
+          />
+        )}
+      />
+
+      <PressableText
+        text="Submit"
+        onPress={handleSubmit((data) => onSubmit(data as WorkoutFormSubmit))}
       />
     </View>
   );
