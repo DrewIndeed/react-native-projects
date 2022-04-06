@@ -2,12 +2,19 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Workout } from '../types/data';
 import { secToMin, formatSec } from '../utils/time';
 
-export default function WorkoutItem({ item }: { item: Workout }) {
+export default function WorkoutItem({
+  item,
+  children,
+}: {
+  item: Workout;
+  children?: React.ReactNode;
+}) {
   return (
     <View style={styles.container}>
       <Text style={styles.name}>{item.name}</Text>
       <Text style={styles.duration}>Duration: {formatSec(item.duration)}</Text>
       <Text style={styles.difficulty}>Difficulty: {item.difficulty}</Text>
+      {children && <View>{children}</View>}
     </View>
   );
 }

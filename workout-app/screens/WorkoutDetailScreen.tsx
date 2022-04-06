@@ -5,6 +5,8 @@ import CustomModal from '../components/styled/CustomModal';
 import PressableText from '../components/styled/PressableText';
 import { formatSec } from '../utils/time';
 import { FontAwesome } from '@expo/vector-icons';
+import React from 'react';
+import WorkoutItem from '../components/WorkoutItem';
 
 type NavigateParams = {
   route: {
@@ -26,25 +28,27 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
   return (
     <View style={styles.container}>
       {/* use ? because workoutBySlug might be undefined */}
-      <Text style={styles.header}>{workoutBySlug.name}</Text>
-      <CustomModal
-        activator={({ handleOpen }) => (
-          <PressableText onPress={handleOpen} text="Check Sequence" />
-        )}
-      >
-        <View>
-          {workoutBySlug.sequence.map((sqItem, idx) => (
-            <View key={sqItem.slug} style={styles.sequenceItem}>
-              <Text>
-                {sqItem.name} - {sqItem.type} - {formatSec(sqItem.duration)}
-              </Text>
-              {idx !== workoutBySlug.sequence.length - 1 && (
-                <FontAwesome name="arrow-down" size={20} />
-              )}
-            </View>
-          ))}
-        </View>
-      </CustomModal>
+      {/* <Text style={styles.header}>{workoutBySlug.name}</Text> */}
+      <WorkoutItem item={workoutBySlug}>
+        <CustomModal
+          activator={({ handleOpen }) => (
+            <PressableText onPress={handleOpen} text="Check Sequence" />
+          )}
+        >
+          <View>
+            {workoutBySlug.sequence.map((sqItem, idx) => (
+              <View key={sqItem.slug} style={styles.sequenceItem}>
+                <Text>
+                  {sqItem.name} - {sqItem.type} - {formatSec(sqItem.duration)}
+                </Text>
+                {idx !== workoutBySlug.sequence.length - 1 && (
+                  <FontAwesome name="arrow-down" size={20} />
+                )}
+              </View>
+            ))}
+          </View>
+        </CustomModal>
+      </WorkoutItem>
     </View>
   );
 };
