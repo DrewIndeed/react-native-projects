@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export function useCountDown(idx: number, initDuration: number) {
   const [currentDuration, setCurrentDuration] = useState(-1);
+  const intervalRef = useRef<number>();
 
   // counting down handler
   useEffect(() => {
@@ -9,20 +10,34 @@ export function useCountDown(idx: number, initDuration: number) {
     if (idx === -1) return;
 
     // use tracking duration to count down
-    const intervalId = window.setInterval(() => {
+    intervalRef.current = window.setInterval(() => {
       setCurrentDuration((curDur) => {
         console.log(curDur);
         return curDur - 1;
       });
-    }, 100);
+    }, 50);
 
-    return () => window.clearInterval(intervalId);
+    return cleanup;
   }, [idx]);
 
   // to set initial value of counting down duration
   useEffect(() => {
     setCurrentDuration(initDuration);
   }, [initDuration]);
+
+  // clean up overall Count Down hook
+  useEffect(() => {
+    if (currentDuration === 0) cleanup();
+  }, [currentDuration]);
+
+  // clean up function
+  const cleanup = () => {
+    if (intervalRef.current) {
+      console.log('Cleaning up useCountDown()...');
+      window.clearInterval(intervalRef.current);
+      intervalRef.current = undefined;
+    }
+  };
 
   return currentDuration;
 }

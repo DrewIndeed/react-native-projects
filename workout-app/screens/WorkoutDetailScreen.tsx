@@ -5,7 +5,7 @@ import CustomModal from '../components/styled/CustomModal';
 import PressableText from '../components/styled/PressableText';
 import { formatSec } from '../utils/time';
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import WorkoutItem from '../components/WorkoutItem';
 import { SequenceItem } from '../types/data';
 import { useCountDown } from '../hooks/useCountDown';
@@ -39,6 +39,18 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
     // if idx is the valid array index (starting from 0), return duration otherwise -1
     idxTracker >= 0 ? sequence[idxTracker].duration : -1
   );
+
+  // handle adding new item to sequence when counting finished
+  useEffect(() => {
+    // if there is no workout data, do nohting
+    if (!workoutBySlug) return;
+
+    // if it is the last item of the sequence
+    if (idxTracker === workoutBySlug.sequence.length - 1) return;
+
+    // if the duration of the current item finished counting donw, increment to the next item
+    if (countDown === 0) addItemToSequence(idxTracker + 1);
+  }, [countDown]);
 
   // method to add item to sequence
   const addItemToSequence = (idx: number) => {
