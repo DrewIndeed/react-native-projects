@@ -37,9 +37,6 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
   // deconstruct useCountDown since returning is an object now
   const { currentDuration, isRunning, stop, start } = useCountDown(idxTracker);
 
-  // print out isRunning state
-  console.log('isRunning: ', isRunning);
-
   // handle adding new item to sequence when counting finished
   useEffect(() => {
     // if there is no workout data, do nohting
@@ -67,8 +64,15 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
 
   if (!workoutBySlug) return null;
 
+  // helper variable
   const hasReachedEnd =
     sequence.length === workoutBySlug.sequence.length && currentDuration === 0;
+
+  if (hasReachedEnd) {
+    setTimeout(() => {
+      setSequence([]);
+    }, 1000);
+  }
 
   return (
     <View style={styles.container}>
@@ -97,11 +101,25 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
 
       {/* display play icon and duration count down */}
       <View style={styles.centerView}>
-        {sequence.length === 0 && (
+        {sequence.length === 0 ? (
           <FontAwesome
             name="play-circle-o"
             size={80}
             onPress={() => addItemToSequence(0)}
+          />
+        ) : isRunning ? (
+          <FontAwesome name="stop-circle-o" size={80} onPress={() => stop()} />
+        ) : (
+          <FontAwesome
+            name="play-circle-o"
+            size={80}
+            onPress={() => {
+              if (hasReachedEnd) {
+                console.log('RESTART');
+              } else {
+                start(currentDuration);
+              }
+            }}
           />
         )}
 

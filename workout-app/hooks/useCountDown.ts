@@ -17,11 +17,11 @@ export function useCountDown(idx: number, initDuration: number = -1) {
           // console.log(curDur);
           return curDur - 1;
         });
-      }, 1000);
+      }, 50);
     }
 
     return cleanup;
-  }, [idx]);
+  }, [idx, isRunning]);
 
   // to set initial value of counting down duration
   // THIS WILL OVERRIDE start() if not commented out
@@ -37,7 +37,7 @@ export function useCountDown(idx: number, initDuration: number = -1) {
   // clean up function
   const cleanup = () => {
     if (intervalRef.current) {
-      console.log('Cleaning up useCountDown()...');
+      console.log(`Cleaning up useCountDown() - ${idx}...`);
       setIsRunning(false);
       window.clearInterval(intervalRef.current);
       intervalRef.current = undefined;
