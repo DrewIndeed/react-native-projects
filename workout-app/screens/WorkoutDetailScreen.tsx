@@ -110,8 +110,8 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
       </View>
 
       {/* display exercise name and progress text */}
-      <View>
-        <Text>
+      <View style={{ alignItems: 'center' }}>
+        <Text style={{ fontSize: 60, fontWeight: 'bold' }}>
           {sequence.length === 0
             ? 'Prepare'
             : hasReachedEnd
