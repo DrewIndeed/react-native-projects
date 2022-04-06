@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import PressableText from './styled/PressableText';
@@ -18,6 +18,9 @@ type WorkoutFormProps = {
 
 const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
   const { control, handleSubmit } = useForm();
+  const [isSelectionOn, setIsSelectionOn] = useState(false);
+
+  const selections = ['Exercise', 'Stretch', 'Break'];
 
   return (
     <View style={styles.container}>
@@ -70,14 +73,38 @@ const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
           control={control}
           rules={{ required: true }}
           name="type"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-              placeholder="Type"
-            />
-          )}
+          render={({ field: { onChange, value } }) =>
+            isSelectionOn ? (
+              <View
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  borderColor: 'rgba(0,0,0,0.4)',
+                }}
+              >
+                {selections.map((slt) => (
+                  <PressableText
+                    key={slt}
+                    text={slt}
+                    onPressIn={() => {
+                      onChange(slt);
+                      setIsSelectionOn(false);
+                    }}
+                    style={styles.selection}
+                  />
+                ))}
+              </View>
+            ) : (
+              <TextInput
+                onPressIn={() => setIsSelectionOn(true)}
+                onChangeText={onChange}
+                value={value}
+                style={styles.input}
+                placeholder="Type"
+              />
+            )
+          }
         />
       </View>
 
@@ -106,6 +133,11 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: 'row',
+  },
+  selection: {
+    margin: 2,
+    padding: 5,
+    alignSelf: 'center',
   },
 });
 
