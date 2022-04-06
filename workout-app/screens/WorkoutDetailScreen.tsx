@@ -63,6 +63,9 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
 
   if (!workoutBySlug) return null;
 
+  const hasReachedEnd =
+    sequence.length === workoutBySlug.sequence.length && countDown === 0;
+
   return (
     <View style={styles.container}>
       {/* use ? because workoutBySlug might be undefined */}
@@ -87,6 +90,8 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
           </View>
         </CustomModal>
       </WorkoutItem>
+
+      {/* display play icon and duration count down */}
       <View style={styles.centerView}>
         {sequence.length === 0 && (
           <FontAwesome
@@ -102,6 +107,17 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
             <Text style={{ fontSize: 30 }}>{countDown}</Text>
           </View>
         )}
+      </View>
+
+      {/* display exercise name and progress text */}
+      <View>
+        <Text>
+          {sequence.length === 0
+            ? 'Prepare'
+            : hasReachedEnd
+            ? 'Great job!'
+            : sequence[idxTracker].name}
+        </Text>
       </View>
     </View>
   );
