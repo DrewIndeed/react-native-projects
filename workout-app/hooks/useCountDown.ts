@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
-export function useCountDown(idx: number, initDuration: number) {
+export function useCountDown(idx: number, initDuration: number = -1) {
   const [currentDuration, setCurrentDuration] = useState(-1);
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<number>();
@@ -25,9 +25,9 @@ export function useCountDown(idx: number, initDuration: number) {
 
   // to set initial value of counting down duration
   // THIS WILL OVERRIDE start() if not commented out
-  //   useEffect(() => {
-  //     setCurrentDuration(initDuration);
-  //   }, [initDuration]);
+  useEffect(() => {
+    setCurrentDuration(initDuration);
+  }, [initDuration]);
 
   // clean up overall Count Down hook
   useEffect(() => {
