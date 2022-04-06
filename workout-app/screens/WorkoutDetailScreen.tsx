@@ -35,7 +35,7 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
 
   // useCountDown hook usage
   // deconstruct useCountDown since returning is an object now
-  const { currentDuration, isRunning, stop } = useCountDown(
+  const { currentDuration, isRunning, stop, start } = useCountDown(
     idxTracker,
     // if idx is the valid array index (starting from 0), return duration otherwise -1
     idxTracker >= 0 ? sequence[idxTracker].duration : -1
@@ -52,9 +52,6 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
     // if it is the last item of the sequence
     if (idxTracker === workoutBySlug.sequence.length - 1) return;
 
-    // testing usage of isRunning state
-    if (currentDuration === 10) stop();
-
     // if the duration of the current item finished counting donw, increment to the next item
     if (currentDuration === 0) addItemToSequence(idxTracker + 1);
   }, [currentDuration]);
@@ -66,6 +63,9 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
 
     // update current idx of current sequence item
     setIdxTracker(idx);
+
+    // start() from useCountDown
+    start(50);
   };
 
   if (!workoutBySlug) return null;
