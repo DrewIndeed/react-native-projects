@@ -29,7 +29,7 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
     <View style={styles.container}>
       {/* use ? because workoutBySlug might be undefined */}
       {/* <Text style={styles.header}>{workoutBySlug.name}</Text> */}
-      <WorkoutItem item={workoutBySlug}>
+      <WorkoutItem item={workoutBySlug} childStyles={{ marginTop: 10 }}>
         <CustomModal
           activator={({ handleOpen }) => (
             <PressableText onPress={handleOpen} text="Check Sequence" />
