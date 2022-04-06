@@ -95,6 +95,13 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
             onPress={() => addItemToSequence(0)}
           />
         )}
+
+        {/* if there are sequence items and duration starts coungting and is counting down */}
+        {sequence.length > 0 && countDown >= 0 && (
+          <View>
+            <Text>{countDown}</Text>
+          </View>
+        )}
       </View>
     </View>
   );
