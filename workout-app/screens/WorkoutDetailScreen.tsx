@@ -101,53 +101,59 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
         </CustomModal>
       </WorkoutItem>
 
-      {/* display play icon and duration count down */}
-      <View style={styles.centerView}>
-        {sequence.length === 0 ? (
-          <FontAwesome
-            name="play-circle-o"
-            size={80}
-            onPress={() => addItemToSequence(0)}
-          />
-        ) : isRunning ? (
-          <FontAwesome name="pause-circle-o" size={80} onPress={() => stop()} />
-        ) : (
-          <FontAwesome
-            name="play-circle-o"
-            size={80}
-            onPress={() => {
-              if (hasReachedEnd) {
-                console.log('RESTART');
-              } else {
-                start(currentDuration);
-              }
-            }}
-          />
-        )}
+      <View style={styles.wrapper}>
+        {/* display play icon and duration count down */}
+        <View style={styles.centerView}>
+          {sequence.length === 0 ? (
+            <FontAwesome
+              name="play-circle-o"
+              size={80}
+              onPress={() => addItemToSequence(0)}
+            />
+          ) : isRunning ? (
+            <FontAwesome
+              name="pause-circle-o"
+              size={80}
+              onPress={() => stop()}
+            />
+          ) : (
+            <FontAwesome
+              name="play-circle-o"
+              size={80}
+              onPress={() => {
+                if (hasReachedEnd) {
+                  console.log('RESTART');
+                } else {
+                  start(currentDuration);
+                }
+              }}
+            />
+          )}
 
-        {/* if there are sequence items and duration starts coungting and is counting down */}
-        {sequence.length > 0 && currentDuration >= 0 && (
-          <View style={{ marginTop: 20 }}>
-            <Text style={{ fontSize: 30 }}>
-              {currentDuration > sequence[idxTracker].duration
-                ? startUpSeq[
-                    currentDuration - sequence[idxTracker].duration - 1
-                  ]
-                : currentDuration}
-            </Text>
-          </View>
-        )}
-      </View>
+          {/* if there are sequence items and duration starts coungting and is counting down */}
+          {sequence.length > 0 && currentDuration >= 0 && (
+            <View style={{ marginTop: 20 }}>
+              <Text style={{ fontSize: 30 }}>
+                {currentDuration > sequence[idxTracker].duration
+                  ? startUpSeq[
+                      currentDuration - sequence[idxTracker].duration - 1
+                    ]
+                  : currentDuration}
+              </Text>
+            </View>
+          )}
+        </View>
 
-      {/* display exercise name and progress text */}
-      <View style={{ alignItems: 'center' }}>
-        <Text style={{ fontSize: 60, fontWeight: 'bold' }}>
-          {sequence.length === 0
-            ? 'Prepare'
-            : hasReachedEnd
-            ? 'Great job!'
-            : sequence[idxTracker].name}
-        </Text>
+        {/* display exercise name and progress text */}
+        <View style={{ alignItems: 'center' }}>
+          <Text style={{ fontSize: 60, fontWeight: 'bold' }}>
+            {sequence.length === 0
+              ? 'Prepare'
+              : hasReachedEnd
+              ? 'Great job!'
+              : sequence[idxTracker].name}
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -171,6 +177,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+  },
+  wrapper: {
+    borderRadius: 10,
+    borderColor: 'rgba(0,0,0,0.1)',
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: '#fff',
   },
 });
 
