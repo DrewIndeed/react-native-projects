@@ -1,13 +1,27 @@
 import React from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { useState } from 'react';
+import PressableText from './styled/PressableText';
 
-const WorkoutForm = () => {
+// type for submit form information
+export type WorkoutFormSubmit = {
+  name: string;
+  duration: string;
+};
+
+// type for WorkoutForm component Props
+type WorkoutFormProps = {
+  onSubmit: (form: WorkoutFormSubmit) => void;
+};
+
+const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
+  // state to keep track of form information on inputting
   const [form, setForm] = useState({
     name: '',
     duration: '',
   });
 
+  // method to update form information on inputting
   const onChangeText = (name: string) => (text: string) => {
     setForm({
       ...form,
@@ -28,6 +42,7 @@ const WorkoutForm = () => {
         style={styles.input}
         onChangeText={onChangeText('duration')}
       />
+      <PressableText text="Submit" onPress={() => onSubmit(form)} />
     </View>
   );
 };

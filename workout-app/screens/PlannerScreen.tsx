@@ -1,11 +1,16 @@
-import { View, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
-import WorkoutForm from '../components/WorkoutForm';
+import WorkoutForm, { WorkoutFormSubmit } from '../components/WorkoutForm';
 
 const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
+  // method to handle form submission
+  const handleOnSubmit = (form: WorkoutFormSubmit) => {
+    alert(`${form.name} - ${form.duration}`);
+  };
+
   return (
     <View style={styles.container}>
-      <WorkoutForm />
+      <WorkoutForm onSubmit={handleOnSubmit} />
     </View>
   );
 };
