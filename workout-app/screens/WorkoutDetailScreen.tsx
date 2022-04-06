@@ -87,7 +87,7 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
           </View>
         </CustomModal>
       </WorkoutItem>
-      <View>
+      <View style={styles.centerView}>
         {sequence.length === 0 && (
           <FontAwesome
             name="play-circle-o"
@@ -99,7 +99,7 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
         {/* if there are sequence items and duration starts coungting and is counting down */}
         {sequence.length > 0 && countDown >= 0 && (
           <View>
-            <Text>{countDown}</Text>
+            <Text style={{ fontSize: 30 }}>{countDown}</Text>
           </View>
         )}
       </View>
@@ -117,13 +117,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: 'bold',
   },
-  centerView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   sequenceItem: {
     alignItems: 'center',
+  },
+  centerView: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginBottom: 20,
   },
 });
 
