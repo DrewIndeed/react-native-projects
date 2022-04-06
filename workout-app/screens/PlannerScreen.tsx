@@ -5,7 +5,7 @@ import WorkoutForm, { WorkoutFormSubmit } from '../components/WorkoutForm';
 const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
   // method to handle form submission
   const handleOnSubmit = (form: WorkoutFormSubmit) => {
-    alert(`${form.name} - ${form.duration}`);
+    alert(`${form.name} - ${form.duration} - ${form.reps} - ${form.type}`);
   };
 
   return (

@@ -7,6 +7,8 @@ import PressableText from './styled/PressableText';
 export type WorkoutFormSubmit = {
   name: string;
   duration: string;
+  reps?: number;
+  type: string;
 };
 
 // type for WorkoutForm component Props
@@ -29,6 +31,7 @@ const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
             onChangeText={onChange}
             value={value}
             style={styles.input}
+            placeholder="Name"
           />
         )}
       />
@@ -42,6 +45,34 @@ const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
             onChangeText={onChange}
             value={value}
             style={styles.input}
+            placeholder="Duration"
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="reps"
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            onChangeText={onChange}
+            value={value}
+            style={styles.input}
+            placeholder="Repetitions"
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        rules={{ required: true }}
+        name="type"
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            onChangeText={onChange}
+            value={value}
+            style={styles.input}
+            placeholder="Type"
           />
         )}
       />
@@ -61,9 +92,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   input: {
-    height: 40,
-    margin: 12,
+    height: 35,
+    margin: 10,
     borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.4)',
+    borderRadius: 5,
     padding: 10,
   },
 });
