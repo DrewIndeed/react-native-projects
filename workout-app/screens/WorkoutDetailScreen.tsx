@@ -34,11 +34,15 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
   const [idxTracker, setIdxTracker] = useState(-1);
 
   // useCountDown hook usage
-  const countDown = useCountDown(
+  // deconstruct useCountDown since returning is an object now
+  const { currentDuration, isRunning, stop } = useCountDown(
     idxTracker,
     // if idx is the valid array index (starting from 0), return duration otherwise -1
     idxTracker >= 0 ? sequence[idxTracker].duration : -1
   );
+
+  // print out isRunning state
+  console.log('isRunning: ', isRunning);
 
   // handle adding new item to sequence when counting finished
   useEffect(() => {
@@ -48,9 +52,12 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
     // if it is the last item of the sequence
     if (idxTracker === workoutBySlug.sequence.length - 1) return;
 
+    // testing usage of isRunning state
+    if (currentDuration === 10) stop();
+
     // if the duration of the current item finished counting donw, increment to the next item
-    if (countDown === 0) addItemToSequence(idxTracker + 1);
-  }, [countDown]);
+    if (currentDuration === 0) addItemToSequence(idxTracker + 1);
+  }, [currentDuration]);
 
   // method to add item to sequence
   const addItemToSequence = (idx: number) => {
@@ -64,7 +71,7 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
   if (!workoutBySlug) return null;
 
   const hasReachedEnd =
-    sequence.length === workoutBySlug.sequence.length && countDown === 0;
+    sequence.length === workoutBySlug.sequence.length && currentDuration === 0;
 
   return (
     <View style={styles.container}>
@@ -102,9 +109,9 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
         )}
 
         {/* if there are sequence items and duration starts coungting and is counting down */}
-        {sequence.length > 0 && countDown >= 0 && (
+        {sequence.length > 0 && currentDuration >= 0 && (
           <View>
-            <Text style={{ fontSize: 30 }}>{countDown}</Text>
+            <Text style={{ fontSize: 30 }}>{currentDuration}</Text>
           </View>
         )}
       </View>

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 
 export function useCountDown(idx: number, initDuration: number) {
   const [currentDuration, setCurrentDuration] = useState(-1);
+  const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<number>();
 
   // counting down handler
@@ -9,13 +10,16 @@ export function useCountDown(idx: number, initDuration: number) {
     // if there is no item in the sequence array, do nothing
     if (idx === -1) return;
 
+    // update isRunning to true
+    setIsRunning(true);
+
     // use tracking duration to count down
     intervalRef.current = window.setInterval(() => {
       setCurrentDuration((curDur) => {
         console.log(curDur);
         return curDur - 1;
       });
-    }, 50);
+    }, 10);
 
     return cleanup;
   }, [idx]);
@@ -34,10 +38,15 @@ export function useCountDown(idx: number, initDuration: number) {
   const cleanup = () => {
     if (intervalRef.current) {
       console.log('Cleaning up useCountDown()...');
+      setIsRunning(false);
       window.clearInterval(intervalRef.current);
       intervalRef.current = undefined;
     }
   };
 
-  return currentDuration;
+  return {
+    currentDuration,
+    isRunning,
+    stop: cleanup,
+  };
 }
