@@ -1,13 +1,20 @@
-import { View, Text, Button } from 'react-native';
+import { View, StyleSheet, TextInput } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import WorkoutForm from '../components/WorkoutForm';
 
 const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
   return (
-    <View>
-      <Text>PlannerScreen</Text>
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+    <View style={styles.container}>
+      <WorkoutForm />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    flex: 1,
+  },
+});
 
 export default PlannerScreen;
