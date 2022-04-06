@@ -125,7 +125,7 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
 
         {/* if there are sequence items and duration starts coungting and is counting down */}
         {sequence.length > 0 && currentDuration >= 0 && (
-          <View>
+          <View style={{marginTop: 20}}>
             <Text style={{ fontSize: 30 }}>{currentDuration}</Text>
           </View>
         )}
@@ -159,8 +159,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   centerView: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
   },
