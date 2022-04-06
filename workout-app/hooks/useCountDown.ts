@@ -17,7 +17,7 @@ export function useCountDown(idx: number, initDuration: number = -1) {
           // console.log(curDur);
           return curDur - 1;
         });
-      }, 50);
+      }, 1000);
     }
 
     return cleanup;

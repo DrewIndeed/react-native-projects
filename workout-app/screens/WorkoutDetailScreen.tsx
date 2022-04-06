@@ -37,6 +37,8 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
   // deconstruct useCountDown since returning is an object now
   const { currentDuration, isRunning, stop, start } = useCountDown(idxTracker);
 
+  const startUpSeq = ['Go 🔥', '1', '2', '3'];
+
   // handle adding new item to sequence when counting finished
   useEffect(() => {
     // if there is no workout data, do nohting
@@ -59,7 +61,7 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
     setIdxTracker(idx);
 
     // start() from useCountDown
-    start(newSequence[idx].duration);
+    start(newSequence[idx].duration + startUpSeq.length);
   };
 
   if (!workoutBySlug) return null;
@@ -108,7 +110,7 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
             onPress={() => addItemToSequence(0)}
           />
         ) : isRunning ? (
-          <FontAwesome name="stop-circle-o" size={80} onPress={() => stop()} />
+          <FontAwesome name="pause-circle-o" size={80} onPress={() => stop()} />
         ) : (
           <FontAwesome
             name="play-circle-o"
@@ -125,8 +127,14 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
 
         {/* if there are sequence items and duration starts coungting and is counting down */}
         {sequence.length > 0 && currentDuration >= 0 && (
-          <View style={{marginTop: 20}}>
-            <Text style={{ fontSize: 30 }}>{currentDuration}</Text>
+          <View style={{ marginTop: 20 }}>
+            <Text style={{ fontSize: 30 }}>
+              {currentDuration > sequence[idxTracker].duration
+                ? startUpSeq[
+                    currentDuration - sequence[idxTracker].duration - 1
+                  ]
+                : currentDuration}
+            </Text>
           </View>
         )}
       </View>
