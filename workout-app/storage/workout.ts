@@ -23,3 +23,9 @@ export const getWorkouts = async (): Promise<Workout[]> =>
 export const clearWorkouts = async () => {
     await removeItem('workout-data');
 };
+
+export const storeWorkouts = async (newWorkout: Workout): Promise<boolean> => {
+    const currentWorkouts = await getWorkouts();
+    await storeData('workout-data', [newWorkout, ...currentWorkouts]);
+    return true;
+};

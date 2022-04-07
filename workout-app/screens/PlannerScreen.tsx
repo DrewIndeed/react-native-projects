@@ -10,6 +10,7 @@ import CustomModal from '../components/styled/CustomModal';
 import WorkoutModalForm, {
     WorkoutFormData,
 } from '../components/WorkoutModalForm';
+import { storeWorkouts } from '../storage/workout';
 
 const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
     // state to keep track of planner sequence
@@ -43,7 +44,7 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
         else return 'easy';
     };
 
-    const handleWorkoutSubmit = (form: WorkoutFormData) => {
+    const handleWorkoutSubmit = async (form: WorkoutFormData) => {
         const duration = sequenceItems.reduce(
             (acc, item) => acc + item.duration,
             0
@@ -60,7 +61,8 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
             duration,
         };
 
-        console.log(newWorkout);
+        // console.log(newWorkout);
+        await storeWorkouts(newWorkout)
     };
 
     return (
@@ -98,8 +100,8 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
                         {({ handleClose }) => (
                             <View>
                                 <WorkoutModalForm
-                                    onSubmit={(data) => {
-                                        handleWorkoutSubmit(data);
+                                    onSubmit={async (data) => {
+                                        await handleWorkoutSubmit(data);
                                         setSequenceItems([]);
                                         handleClose();
                                         navigation.navigate('Home');
