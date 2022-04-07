@@ -94,9 +94,17 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
                         />
                     )}
                 >
-                    <View>
-                        <WorkoutModalForm onSubmit={handleWorkoutSubmit} />
-                    </View>
+                    {({ handleClose }) => (
+                        <View>
+                            <WorkoutModalForm
+                                onSubmit={(data) => {
+                                    handleWorkoutSubmit(data);
+                                    setSequenceItems([])
+                                    handleClose();
+                                }}
+                            />
+                        </View>
+                    )}
                 </CustomModal>
             </View>
         </View>

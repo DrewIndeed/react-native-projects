@@ -11,7 +11,7 @@ type WorkoutProps = {
 };
 
 export default function WorkoutModalForm({ onSubmit }: WorkoutProps) {
-    const { control, handleSubmit } = useForm();
+    const { control, handleSubmit, reset } = useForm();
 
     return (
         <View style={styles.container}>
@@ -35,6 +35,7 @@ export default function WorkoutModalForm({ onSubmit }: WorkoutProps) {
                 text="Confirm"
                 onPress={handleSubmit((data) => {
                     onSubmit(data as WorkoutFormData);
+                    reset();
                 })}
             />
         </View>

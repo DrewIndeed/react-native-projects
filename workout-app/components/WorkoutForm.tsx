@@ -17,7 +17,7 @@ type WorkoutFormProps = {
 };
 
 const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
-    const { control, handleSubmit } = useForm();
+    const { control, handleSubmit, reset } = useForm();
     const [isSelectionOn, setIsSelectionOn] = useState(false);
 
     const selections = ['Exercise', 'Stretch', 'Break'];
@@ -108,11 +108,12 @@ const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
             </View>
 
             <PressableText
-                style={{marginTop: 15}}
+                style={{ marginTop: 15 }}
                 text="Add Exercise"
-                onPress={handleSubmit((data) =>
-                    onSubmit(data as WorkoutFormSubmit)
-                )}
+                onPress={handleSubmit((data) => {
+                    onSubmit(data as WorkoutFormSubmit);
+                    reset();
+                })}
             />
         </View>
     );

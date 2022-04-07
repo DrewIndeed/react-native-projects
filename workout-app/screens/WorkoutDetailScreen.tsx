@@ -91,19 +91,28 @@ const WorkoutDetailScreen = ({ route }: DetailNavigation) => {
                         />
                     )}
                 >
-                    <View>
-                        {workoutBySlug.sequence.map((sqItem, idx) => (
-                            <View key={sqItem.slug} style={styles.sequenceItem}>
-                                <Text>
-                                    {sqItem.name} - {sqItem.type} -{' '}
-                                    {formatSec(sqItem.duration)}
-                                </Text>
-                                {idx !== workoutBySlug.sequence.length - 1 && (
-                                    <FontAwesome name="arrow-down" size={20} />
-                                )}
-                            </View>
-                        ))}
-                    </View>
+                    {() => (
+                        <View>
+                            {workoutBySlug.sequence.map((sqItem, idx) => (
+                                <View
+                                    key={sqItem.slug}
+                                    style={styles.sequenceItem}
+                                >
+                                    <Text>
+                                        {sqItem.name} - {sqItem.type} -{' '}
+                                        {formatSec(sqItem.duration)}
+                                    </Text>
+                                    {idx !==
+                                        workoutBySlug.sequence.length - 1 && (
+                                        <FontAwesome
+                                            name="arrow-down"
+                                            size={20}
+                                        />
+                                    )}
+                                </View>
+                            ))}
+                        </View>
+                    )}
                 </CustomModal>
             </WorkoutItem>
 
