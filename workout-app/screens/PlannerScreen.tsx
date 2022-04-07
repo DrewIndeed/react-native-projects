@@ -1,10 +1,14 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, FlatList, Text } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import WorkoutForm, { WorkoutFormSubmit } from '../components/WorkoutForm';
 import { SequenceItem, SequenceType } from '../types/data';
 import slugify from 'slugify';
+import { useState } from 'react';
 
 const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
+    // state to keep track of planner sequence
+    const [sequenceItems, setSequenceItems] = useState<SequenceItem[]>([]);
+
     // method to handle form submission
     const handleOnSubmit = (form: WorkoutFormSubmit) => {
         const sequenceItem: SequenceItem = {
@@ -19,11 +23,17 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
 
         if (!form.reps) sequenceItem.reps = Number(form.reps);
 
-        console.log(sequenceItem);
+        console.log('Submitted sequence data: ', sequenceItem);
+        setSequenceItems([...sequenceItems, sequenceItem]);
     };
 
     return (
         <View style={styles.container}>
+            <FlatList
+                data={sequenceItems}
+                keyExtractor={(item) => item.slug}
+                renderItem={({ item }) => <Text>{item.name}</Text>}
+            />
             <WorkoutForm onSubmit={handleOnSubmit} />
         </View>
     );
