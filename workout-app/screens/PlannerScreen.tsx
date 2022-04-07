@@ -84,29 +84,32 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
                 }}
             />
             <WorkoutForm onSubmit={handleOnSubmit} />
-            <View>
-                <CustomModal
-                    activator={({ handleOpen }) => (
-                        <PressableText
-                            style={{ marginTop: 15 }}
-                            text="Create Workout"
-                            onPress={handleOpen}
-                        />
-                    )}
-                >
-                    {({ handleClose }) => (
-                        <View>
-                            <WorkoutModalForm
-                                onSubmit={(data) => {
-                                    handleWorkoutSubmit(data);
-                                    setSequenceItems([])
-                                    handleClose();
-                                }}
+            {sequenceItems.length > 0 && (
+                <View>
+                    <CustomModal
+                        activator={({ handleOpen }) => (
+                            <PressableText
+                                style={{ marginTop: 15 }}
+                                text="Create Workout"
+                                onPress={handleOpen}
                             />
-                        </View>
-                    )}
-                </CustomModal>
-            </View>
+                        )}
+                    >
+                        {({ handleClose }) => (
+                            <View>
+                                <WorkoutModalForm
+                                    onSubmit={(data) => {
+                                        handleWorkoutSubmit(data);
+                                        setSequenceItems([]);
+                                        handleClose();
+                                        navigation.navigate('Home');
+                                    }}
+                                />
+                            </View>
+                        )}
+                    </CustomModal>
+                </View>
+            )}
         </View>
     );
 };
