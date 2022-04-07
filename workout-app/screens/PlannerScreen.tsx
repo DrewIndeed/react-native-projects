@@ -4,6 +4,8 @@ import WorkoutForm, { WorkoutFormSubmit } from '../components/WorkoutForm';
 import { SequenceItem, SequenceType } from '../types/data';
 import slugify from 'slugify';
 import { useState } from 'react';
+import WorkoutPlannerItem from '../components/WorkoutPlannerItem';
+import PressableText from '../components/styled/PressableText';
 
 const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
     // state to keep track of planner sequence
@@ -32,7 +34,20 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
             <FlatList
                 data={sequenceItems}
                 keyExtractor={(item) => item.slug}
-                renderItem={({ item }) => <Text>{item.name}</Text>}
+                renderItem={({ item, index }) => {
+                    return (
+                        <WorkoutPlannerItem item={item}>
+                            <PressableText
+                                text="Remove"
+                                onPressIn={() => {
+                                    const items = [...sequenceItems];
+                                    items.splice(index, 1);
+                                    setSequenceItems(items);
+                                }}
+                            />
+                        </WorkoutPlannerItem>
+                    );
+                }}
             />
             <WorkoutForm onSubmit={handleOnSubmit} />
         </View>
