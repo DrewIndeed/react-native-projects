@@ -6,6 +6,8 @@ import slugify from 'slugify';
 import { useState } from 'react';
 import WorkoutPlannerItem from '../components/WorkoutPlannerItem';
 import PressableText from '../components/styled/PressableText';
+import CustomModal from '../components/styled/CustomModal';
+import WorkoutModalForm from '../components/WorkoutModalForm';
 
 const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
     // state to keep track of planner sequence
@@ -50,6 +52,23 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
                 }}
             />
             <WorkoutForm onSubmit={handleOnSubmit} />
+            <View>
+                <CustomModal
+                    activator={({ handleOpen }) => (
+                        <PressableText
+                            style={{ marginTop: 15 }}
+                            text="Create Workout"
+                            onPress={handleOpen}
+                        />
+                    )}
+                >
+                    <View>
+                        <WorkoutModalForm
+                            onSubmit={(data) => console.log(data)}
+                        />
+                    </View>
+                </CustomModal>
+            </View>
         </View>
     );
 };

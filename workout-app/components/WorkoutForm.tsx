@@ -24,7 +24,6 @@ const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
 
     return (
         <View style={styles.container}>
-            <Text>Exercise Form</Text>
             <View style={styles.rowContainer}>
                 <Controller
                     control={control}
@@ -109,7 +108,8 @@ const WorkoutForm = ({ onSubmit }: WorkoutFormProps) => {
             </View>
 
             <PressableText
-                text="Submit"
+                style={{marginTop: 15}}
+                text="Add Exercise"
                 onPress={handleSubmit((data) =>
                     onSubmit(data as WorkoutFormSubmit)
                 )}
