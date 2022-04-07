@@ -1,13 +1,15 @@
 import { View, StyleSheet, FlatList, Text } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import WorkoutForm, { WorkoutFormSubmit } from '../components/WorkoutForm';
-import { SequenceItem, SequenceType } from '../types/data';
+import { SequenceItem, SequenceType, Workout } from '../types/data';
 import slugify from 'slugify';
 import { useState } from 'react';
 import WorkoutPlannerItem from '../components/WorkoutPlannerItem';
 import PressableText from '../components/styled/PressableText';
 import CustomModal from '../components/styled/CustomModal';
-import WorkoutModalForm from '../components/WorkoutModalForm';
+import WorkoutModalForm, {
+    WorkoutFormData,
+} from '../components/WorkoutModalForm';
 
 const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
     // state to keep track of planner sequence
@@ -29,6 +31,26 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
 
         console.log('Submitted sequence data: ', sequenceItem);
         setSequenceItems([...sequenceItems, sequenceItem]);
+    };
+
+    const handleWorkoutSubmit = (form: WorkoutFormData) => {
+        const duration = sequenceItems.reduce(
+            (acc, item) => acc + item.duration,
+            0
+        );
+
+        const newWorkout: Workout = {
+            name: form.name,
+            slug: slugify(form.name + ' ' + Date.now(), {
+                lower: true,
+                trim: true,
+            }),
+            difficulty: 'easy',
+            sequence: [...sequenceItems],
+            duration,
+        };
+
+        console.log(newWorkout);
     };
 
     return (
@@ -63,9 +85,7 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
                     )}
                 >
                     <View>
-                        <WorkoutModalForm
-                            onSubmit={(data) => console.log(data)}
-                        />
+                        <WorkoutModalForm onSubmit={handleWorkoutSubmit} />
                     </View>
                 </CustomModal>
             </View>
