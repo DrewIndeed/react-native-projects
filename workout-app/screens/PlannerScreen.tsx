@@ -33,6 +33,16 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
         setSequenceItems([...sequenceItems, sequenceItem]);
     };
 
+    const computeDifficulty = (
+        exercisesCount: number,
+        workoutDuration: number
+    ) => {
+        const intensity = workoutDuration / exercisesCount;
+        if (intensity <= 60) return 'hard';
+        else if (intensity <= 100) return 'normal';
+        else return 'easy';
+    };
+
     const handleWorkoutSubmit = (form: WorkoutFormData) => {
         const duration = sequenceItems.reduce(
             (acc, item) => acc + item.duration,
@@ -45,7 +55,7 @@ const PlannerScreen = ({ navigation }: NativeStackHeaderProps) => {
                 lower: true,
                 trim: true,
             }),
-            difficulty: 'easy',
+            difficulty: computeDifficulty(sequenceItems.length, duration),
             sequence: [...sequenceItems],
             duration,
         };
