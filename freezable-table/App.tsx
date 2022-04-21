@@ -158,11 +158,13 @@ function getRandomNumberBetween(min: number, max: number) {
 // ! CONDITION: test data items must have consistent number of keys
 const COLS_NUM = Object.keys(testData[0]).length;
 
+let TEST_GLOBAL: any = [];
+
 export default function App() {
   const headerOffsetX = useRef(new Animated.Value(0)).current;
   const freezeColOffsetY = useRef(new Animated.Value(0)).current;
 
-  const HeaderRow = () => {
+  const HeaderRow = ({ hidden }: { hidden: boolean }) => {
     const headerCells: any = [];
 
     headerCells.push(
@@ -172,11 +174,10 @@ export default function App() {
           width: 100,
           padding: 10,
           opacity: 0,
+          display: hidden ? 'flex' : 'none',
         }}
         key={`HEADER HOLDER NHA`}
-      >
-        HOLDER THUI NHA
-      </Text>
+      ></Text>
     );
 
     for (let i = 0; i < COLS_NUM; i++) {
@@ -219,9 +220,11 @@ export default function App() {
   const DataRow = ({
     dataItem,
     rowOrder,
+    hidden,
   }: {
     dataItem: any;
     rowOrder: number;
+    hidden?: boolean;
   }) => {
     const dataRowContainer: any = [];
     dataRowContainer.push(
@@ -232,12 +235,16 @@ export default function App() {
           backgroundColor: 'lightpink',
           textAlign: 'center',
           padding: 10,
+          display: hidden ? 'flex' : 'none',
         }}
         key={getRandomNumberBetween(1, 1000)}
       >
         {rowOrder + 1}
       </Text>
     );
+
+    TEST_GLOBAL.push(dataRowContainer[0]);
+    // console.log(TEST_GLOBAL.length)
 
     Object.keys(dataItem).forEach((key) => {
       dataRowContainer.push(
@@ -248,6 +255,7 @@ export default function App() {
             backgroundColor: 'violet',
             textAlign: 'center',
             padding: 10,
+            opacity: hidden ? 0 : 1,
           }}
           key={getRandomNumberBetween(1000, 2000)}
         >
@@ -259,19 +267,51 @@ export default function App() {
     return <View style={{ flexDirection: 'row' }}>{dataRowContainer}</View>;
   };
 
+  // create data row elements container
   const dataRows: any = [];
+  const dataRows2: any = [];
   testData.map((item, idx) => {
     dataRows.push(
       <DataRow
         key={getRandomNumberBetween(2000, 3000)}
         dataItem={item}
         rowOrder={idx}
+        hidden={false}
+      />
+    );
+
+    dataRows2.push(
+      <DataRow
+        key={getRandomNumberBetween(2000, 3000)}
+        dataItem={item}
+        rowOrder={idx}
+        hidden={true}
       />
     );
   });
 
   return (
     <View style={styles.container2}>
+      <View style={styles.container3}>
+        <ScrollView
+          bounces={false}
+          scrollEventThrottle={16}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
+          <ScrollView
+            style={{ paddingBottom: 16 }} // ! TO SCROLL VERTICALLY COMPLETELY
+            bounces={false}
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+          >
+            {dataRows2}
+          </ScrollView>
+        </ScrollView>
+
+        <HeaderRow hidden />
+      </View>
+
       <View style={styles.container}>
         <ScrollView
           bounces={false}
@@ -313,7 +353,7 @@ export default function App() {
           </ScrollView>
         </ScrollView>
 
-        <HeaderRow />
+        <HeaderRow hidden={false} />
       </View>
     </View>
   );
@@ -322,14 +362,21 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
     flexDirection: 'column-reverse',
+    marginLeft: 100,
   },
   container2: {
     flex: 1,
     flexDirection: 'row',
     marginVertical: 40,
     overflow: 'hidden',
+  },
+  container3: {
+    flex: 1,
+    backgroundColor: '#fff',
+    flexDirection: 'column-reverse',
+    position: 'absolute',
   },
   box: {
     flexDirection: 'row',
