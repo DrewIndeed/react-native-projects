@@ -151,11 +151,12 @@ const testData = [
   },
 ];
 
-const COLS_NUM = Object.keys(testData[0]).length; // ! CONDITION: test data items must have consistent number of keys
+function getRandomNumberBetween(min: number, max: number) {
+  return Math.random() * (max - min + 1) + min;
+}
 
-const ROWS_NUM = testData.length;
-
-const DATA_KEYS = Object.keys(testData[0]);
+// ! CONDITION: test data items must have consistent number of keys
+const COLS_NUM = Object.keys(testData[0]).length;
 
 export default function App() {
   const headerOffsetX = useRef(new Animated.Value(0)).current;
@@ -163,6 +164,21 @@ export default function App() {
 
   const HeaderRow = () => {
     const headerCells: any = [];
+
+    headerCells.push(
+      <Text
+        style={{
+          borderWidth: 1,
+          width: 100,
+          padding: 10,
+          opacity: 0,
+        }}
+        key={`HEADER HOLDER NHA`}
+      >
+        HOLDER THUI NHA
+      </Text>
+    );
+
     for (let i = 0; i < COLS_NUM; i++) {
       headerCells.push(
         <Text
@@ -200,103 +216,74 @@ export default function App() {
     );
   };
 
-  const Column = ({
-    extra,
-    accessKey,
-    accessOrder,
+  const DataRow = ({
+    dataItem,
+    rowOrder,
   }: {
-    extra?: boolean;
-    accessKey: string;
-    accessOrder: number;
+    dataItem: any;
+    rowOrder: number;
   }) => {
-    const headerCells: any = [];
-    if (extra) {
-      headerCells.push(
+    const dataRowContainer: any = [];
+    dataRowContainer.push(
+      <Text
+        style={{
+          borderWidth: 1,
+          width: 100,
+          backgroundColor: 'lightpink',
+          textAlign: 'center',
+          padding: 10,
+        }}
+        key={getRandomNumberBetween(1, 1000)}
+      >
+        {rowOrder + 1}
+      </Text>
+    );
+
+    Object.keys(dataItem).forEach((key) => {
+      dataRowContainer.push(
         <Text
           style={{
             borderWidth: 1,
-            opacity: 0,
-            width: 150,
+            width: 175,
+            backgroundColor: 'violet',
+            textAlign: 'center',
             padding: 10,
           }}
-          key={`HOLDER NHA`}
-        >{`HOLDER NHA`}</Text>
+          key={getRandomNumberBetween(1000, 2000)}
+        >
+          {dataItem[key]}
+        </Text>
       );
+    });
 
-      for (let i = 0; i < ROWS_NUM; i++)
-        headerCells.push(
-          <Text
-            style={{
-              borderWidth: 1,
-              width: 150,
-              padding: 10,
-              backgroundColor: extra ? 'purple' : '#fff',
-              color: '#fff',
-            }}
-            key={`DATA ${i + 1}`}
-          >{`DATA ${i + 1}`}</Text>
-        );
-    } else {
-      testData.map((dataItem: any, idx) => {
-        headerCells.push(
-          <Text
-            style={{
-              borderWidth: 1,
-              width: 'auto',
-              padding: 10,
-              backgroundColor: extra ? 'purple' : '#fff',
-            }}
-            key={`${dataItem[accessKey]}}-cell-key-${idx}`}
-          >
-            {dataItem[accessKey]}
-          </Text>
-        );
-      });
-    }
-
-    return extra ? (
-      <Animated.View
-        style={[
-          styles.box2,
-          {
-            transform: [
-              {
-                translateY: Animated.multiply(
-                  freezeColOffsetY,
-                  new Animated.Value(-1)
-                ),
-              },
-            ],
-          },
-        ]}
-      >
-        {headerCells}
-      </Animated.View>
-    ) : (
-      <View style={styles.box2}>{headerCells}</View>
-    );
+    return <View style={{ flexDirection: 'row' }}>{dataRowContainer}</View>;
   };
 
-  const cols: any = [];
-  DATA_KEYS.map((k, idx) => {
-    cols.push(<Column key={k} accessOrder={idx} accessKey={k} />);
+  const dataRows: any = [];
+  testData.map((item, idx) => {
+    dataRows.push(
+      <DataRow
+        key={getRandomNumberBetween(2000, 3000)}
+        dataItem={item}
+        rowOrder={idx}
+      />
+    );
   });
 
   return (
     <View style={styles.container2}>
-      <Column extra accessKey="" accessOrder={-1} />
-
       <View style={styles.container}>
         <ScrollView
           bounces={false}
           scrollEventThrottle={16}
-          showsVerticalScrollIndicator={false}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
           onScroll={Animated.event(
             [
               {
                 nativeEvent: {
                   contentOffset: {
-                    y: freezeColOffsetY,
+                    x: headerOffsetX,
                   },
                 },
               },
@@ -308,14 +295,13 @@ export default function App() {
             style={{ paddingBottom: 16 }} // ! TO SCROLL VERTICALLY COMPLETELY
             bounces={false}
             scrollEventThrottle={16}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             onScroll={Animated.event(
               [
                 {
                   nativeEvent: {
                     contentOffset: {
-                      x: headerOffsetX,
+                      y: freezeColOffsetY,
                     },
                   },
                 },
@@ -323,7 +309,7 @@ export default function App() {
               { useNativeDriver: false }
             )}
           >
-            {cols}
+            {dataRows}
           </ScrollView>
         </ScrollView>
 
