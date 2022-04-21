@@ -158,8 +158,6 @@ function getRandomNumberBetween(min: number, max: number) {
 // ! CONDITION: test data items must have consistent number of keys
 const COLS_NUM = Object.keys(testData[0]).length;
 
-let TEST_GLOBAL: any = [];
-
 export default function App() {
   const headerOffsetX = useRef(new Animated.Value(0)).current;
   const freezeColOffsetY = useRef(new Animated.Value(0)).current;
@@ -243,9 +241,6 @@ export default function App() {
       </Text>
     );
 
-    TEST_GLOBAL.push(dataRowContainer[0]);
-    // console.log(TEST_GLOBAL.length)
-
     Object.keys(dataItem).forEach((key) => {
       dataRowContainer.push(
         <Text
@@ -292,7 +287,21 @@ export default function App() {
 
   return (
     <View style={styles.container2}>
-      <View style={styles.container3}>
+      <Animated.View
+        style={[
+          styles.container3,
+          {
+            transform: [
+              {
+                translateY: Animated.multiply(
+                  freezeColOffsetY,
+                  new Animated.Value(-1)
+                ),
+              },
+            ],
+          },
+        ]}
+      >
         <ScrollView
           bounces={false}
           scrollEventThrottle={16}
@@ -310,7 +319,7 @@ export default function App() {
         </ScrollView>
 
         <HeaderRow hidden />
-      </View>
+      </Animated.View>
 
       <View style={styles.container}>
         <ScrollView
