@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Animated, StyleSheet, Text, View, ScrollView } from 'react-native';
 
-// ! CONDITION: test data items must have consistent number of keys
+// ! CONDITION: test data items must have consistent number of keys, data format = arrays of objects
 import testData from './testData.js';
 
 // method to generate random number for unique list keys
@@ -9,7 +9,22 @@ function getRandomNumberBetween(min: number, max: number) {
   return Math.random() * (max - min + 1) + min;
 }
 // global width values array
+// ! CONDITION: length = number of data keys + 1, values > 0
 const globalWidthValues = [150, 175, 175, 175, 250, 175];
+
+// global object to customize table areas' bg colors
+const areasBgColors = {
+  header: 'lime',
+  freezeColumn: 'lightpink',
+  data: 'violet',
+};
+
+// global object to customize table areas' text colors
+const areasTextColors = {
+  header: '#000',
+  freezeColumn: '#000',
+  data: '#000',
+};
 
 export default function App() {
   // anim values tracking refs
@@ -39,8 +54,9 @@ export default function App() {
         style: {
           borderWidth: 1,
           padding: 10,
-          backgroundColor: 'lime',
+          backgroundColor: areasBgColors.header,
           fontWeight: 'bold',
+          color: areasTextColors.header,
         },
       },
     };
@@ -100,7 +116,8 @@ export default function App() {
       firstCell: {
         style: {
           borderWidth: 1,
-          backgroundColor: 'lightpink',
+          backgroundColor: areasBgColors.freezeColumn,
+          color: areasTextColors.freezeColumn,
           textAlign: 'center',
           padding: 10,
           display: hidden ? 'flex' : 'none',
@@ -109,7 +126,8 @@ export default function App() {
       otherCells: {
         style: {
           borderWidth: 1,
-          backgroundColor: 'violet',
+          backgroundColor: areasBgColors.data,
+          color: areasTextColors.data,
           textAlign: 'center',
           padding: 10,
           opacity: hidden ? 0 : 1,
