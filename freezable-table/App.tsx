@@ -1,14 +1,15 @@
 import React, { useRef } from 'react';
 import { Animated, StyleSheet, Text, View, ScrollView } from 'react-native';
+
+// ! CONDITION: test data items must have consistent number of keys
 import testData from './testData.js';
 
 // method to generate random number for unique list keys
 function getRandomNumberBetween(min: number, max: number) {
   return Math.random() * (max - min + 1) + min;
 }
-
-// ! CONDITION: test data items must have consistent number of keys
-const COLS_NUM = Object.keys(testData[0]).length;
+// global width values array
+const globalWidthValues = [150, 175, 175, 175, 250, 175];
 
 export default function App() {
   // anim values tracking refs
@@ -29,7 +30,6 @@ export default function App() {
       firstCell: {
         style: {
           borderWidth: 1,
-          width: 100,
           padding: 10,
           opacity: 0,
           display: hidden ? 'flex' : 'none',
@@ -38,7 +38,6 @@ export default function App() {
       otherCells: {
         style: {
           borderWidth: 1,
-          width: 175,
           padding: 10,
           backgroundColor: 'lime',
           fontWeight: 'bold',
@@ -64,11 +63,12 @@ export default function App() {
       >
         {headerCellsContent.map((content: string, idx: number) => (
           <Text
-            style={
+            style={[
               idx === 0
                 ? headerCellsStyles.firstCell.style
-                : headerCellsStyles.otherCells.style
-            }
+                : headerCellsStyles.otherCells.style,
+              { width: globalWidthValues[idx] },
+            ]}
             key={`HEADER ${idx}`}
           >
             {content}
@@ -100,7 +100,6 @@ export default function App() {
       firstCell: {
         style: {
           borderWidth: 1,
-          width: 100,
           backgroundColor: 'lightpink',
           textAlign: 'center',
           padding: 10,
@@ -110,7 +109,6 @@ export default function App() {
       otherCells: {
         style: {
           borderWidth: 1,
-          width: 175,
           backgroundColor: 'violet',
           textAlign: 'center',
           padding: 10,
@@ -123,11 +121,12 @@ export default function App() {
       <View style={{ flexDirection: 'row' }}>
         {dataRowContainer.map((data: string, idx: number) => (
           <Text
-            style={
+            style={[
               idx === 0
                 ? dataRowStyles.firstCell.style
-                : dataRowStyles.otherCells.style
-            }
+                : dataRowStyles.otherCells.style,
+              { width: globalWidthValues[idx] },
+            ]}
             key={getRandomNumberBetween(0, 2000)}
           >
             {data}
@@ -174,7 +173,7 @@ export default function App() {
                 key={getRandomNumberBetween(2000, 3000)}
                 dataItem={item}
                 rowOrder={idx}
-                hidden={true}
+                hidden
               />
             ))}
           </ScrollView>
@@ -241,7 +240,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
     flexDirection: 'column',
-    marginLeft: 100,
+    marginLeft: globalWidthValues[0],
   },
   mainContainer: {
     flex: 1,
