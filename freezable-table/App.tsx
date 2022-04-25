@@ -1,5 +1,13 @@
 import React, { useRef } from 'react';
-import { Animated, StyleSheet, Text, View, ScrollView } from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  StyleProp,
+  TextStyle,
+} from 'react-native';
 
 // ! CONDITION: test data items must have consistent number of keys, data format = arrays of objects
 import testData from './testData.js';
@@ -10,17 +18,19 @@ function getRandomNumberBetween(min: number, max: number) {
 }
 // global width values array
 // ! CONDITION: length = number of data keys + 1, values > 0
-const globalWidthValues = [150, 175, 175, 175, 250, 175];
+const globalWidthValues = [100, 175, 175, 275, 250, 175];
 
 // global object to customize table areas' bg colors
 const areasBgColors = {
+  firstCell: 'cyan',
   header: 'lime',
   freezeColumn: 'lightpink',
-  data: 'violet',
+  data: 'white',
 };
 
 // global object to customize table areas' text colors
 const areasTextColors = {
+  firstCell: '#000',
   header: '#000',
   freezeColumn: '#000',
   data: '#000',
@@ -35,28 +45,36 @@ export default function App() {
   const HeaderRow = ({ hidden }: { hidden: boolean }) => {
     // generate header cells content based on data
     const headerCellsContent: any = [];
-    headerCellsContent.push(''); // hidden first cell
+    headerCellsContent.push('id'.toUpperCase()); // hidden first cell
     Object.keys(testData[0]).forEach((key) =>
       headerCellsContent.push(key.toUpperCase())
     );
 
     // styles container for first and following cells
-    const headerCellsStyles: any = {
-      firstCell: {
-        style: {
-          borderWidth: 1,
-          padding: 10,
-          opacity: 0,
-          display: hidden ? 'flex' : 'none',
-        },
-      },
+    const commonCellsStyles: StyleProp<TextStyle> = {
+      borderWidth: 1,
+      padding: 10,
+      backgroundColor: areasBgColors.header,
+      fontWeight: 'bold',
+      color: areasTextColors.header,
+      textAlign: 'center',
+    };
+    const headerCellsStyles: {
+      otherCells: { style: StyleProp<TextStyle> };
+      firstCell: { style: StyleProp<TextStyle> };
+    } = {
       otherCells: {
         style: {
-          borderWidth: 1,
-          padding: 10,
-          backgroundColor: areasBgColors.header,
-          fontWeight: 'bold',
-          color: areasTextColors.header,
+          ...commonCellsStyles,
+        },
+      },
+      firstCell: {
+        style: {
+          ...commonCellsStyles,
+          opacity: 1, // ! Toggle display of first cell of header / freeze column here
+          display: hidden ? 'flex' : 'none',
+          backgroundColor: areasBgColors.firstCell,
+          color: areasTextColors.firstCell,
         },
       },
     };
@@ -65,7 +83,7 @@ export default function App() {
       <Animated.View
         style={[
           styles.headerRowContainer,
-          {
+          !hidden && {
             transform: [
               {
                 translateX: Animated.multiply(
@@ -157,21 +175,7 @@ export default function App() {
   return (
     <View style={styles.mainContainer}>
       {/* beneath table to display freeze column */}
-      <Animated.View
-        style={[
-          styles.freezeColTable,
-          {
-            transform: [
-              {
-                translateY: Animated.multiply(
-                  freezeColOffsetY,
-                  new Animated.Value(-1)
-                ),
-              },
-            ],
-          },
-        ]}
-      >
+      <View style={[styles.freezeColTable]}>
         <HeaderRow hidden />
 
         <ScrollView
@@ -180,8 +184,20 @@ export default function App() {
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         >
-          <ScrollView
-            style={{ paddingBottom: 16 }} // ! TO SCROLL VERTICALLY COMPLETELY
+          <Animated.ScrollView
+            style={[
+              { paddingBottom: 16 },
+              {
+                transform: [
+                  {
+                    translateY: Animated.multiply(
+                      freezeColOffsetY,
+                      new Animated.Value(-1)
+                    ),
+                  },
+                ],
+              },
+            ]} // ! TO SCROLL VERTICALLY COMPLETELY
             bounces={false}
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
@@ -194,9 +210,9 @@ export default function App() {
                 hidden
               />
             ))}
-          </ScrollView>
+          </Animated.ScrollView>
         </ScrollView>
-      </Animated.View>
+      </View>
 
       {/* float table to display scrollable table */}
       <View style={styles.scrollableTable}>
@@ -256,20 +272,21 @@ export default function App() {
 const styles = StyleSheet.create({
   scrollableTable: {
     flex: 1,
-    backgroundColor: 'transparent',
     flexDirection: 'column',
-    marginLeft: globalWidthValues[0],
+    overflow: 'hidden', // ! CONDITION: must have to hide header horizontal overflow
+    backgroundColor: 'transparent',
+    marginLeft: globalWidthValues[0], // ! CONDITION: must have to display freeze column from underneath table
   },
   mainContainer: {
     flex: 1,
     flexDirection: 'row',
+    overflow: 'hidden', // ! CONDITION: must have to hide freeze column vertical overflow
     marginVertical: 40,
-    overflow: 'hidden', // ! CONDITION: must have to hide column overflow
   },
   freezeColTable: {
     flex: 1,
-    backgroundColor: '#fff',
     flexDirection: 'column',
+    backgroundColor: '#fff',
     position: 'absolute',
   },
   headerRowContainer: {
