@@ -36,6 +36,15 @@ const areasTextColors = {
   data: '#000',
 };
 
+// data items type declaration
+type DataItem = {
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  country: string;
+};
+
 export default function App() {
   // anim values tracking refs
   const headerOffsetX = useRef(new Animated.Value(0)).current;
@@ -44,8 +53,7 @@ export default function App() {
   // header row component
   const HeaderRow = ({ hidden }: { hidden: boolean }) => {
     // generate header cells content based on data
-    const headerCellsContent: any = [];
-    headerCellsContent.push('id'.toUpperCase()); // hidden first cell
+    const headerCellsContent: string[] = ['id'.toUpperCase()];
     Object.keys(testData[0]).forEach((key) =>
       headerCellsContent.push(key.toUpperCase())
     );
@@ -118,19 +126,21 @@ export default function App() {
     rowOrder,
     hidden,
   }: {
-    dataItem: any;
+    dataItem: DataItem;
     rowOrder: number;
     hidden?: boolean;
   }) => {
     // generate data row cells content based on data
-    const dataRowContainer: any = [];
-    dataRowContainer.push(rowOrder + 1);
-    Object.keys(dataItem).forEach((key) => {
-      dataRowContainer.push(dataItem[key]);
+    const dataRowContainer: string[] = [(rowOrder + 1).toString()];
+    Object.keys(dataItem).forEach((key: string) => {
+      dataRowContainer.push(dataItem[key as keyof DataItem]);
     });
 
     // styles container for first and following cells
-    const dataRowStyles: any = {
+    const dataRowStyles: {
+      firstCell: { style: StyleProp<TextStyle> };
+      otherCells: { style: StyleProp<TextStyle> };
+    } = {
       firstCell: {
         style: {
           borderWidth: 1,
