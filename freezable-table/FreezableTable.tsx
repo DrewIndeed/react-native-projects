@@ -24,6 +24,7 @@ interface FreezableTableProps {
 
   firstCellContent?: string;
   freezeColNum?: number;
+  upperCaseHeader?: boolean;
   freezeHeaderNum?: number;
 
   borderWidth?: number;
@@ -87,7 +88,12 @@ export default function FreezableTable(props: FreezableTableProps) {
 
   // header row data
   const headerRowDataFrame = [
-    [props.firstCellContent || '', ...Object.keys(props.data[0])],
+    [
+      props.firstCellContent || '',
+      ...Object.keys(props.data[0]).map((dt) =>
+        props.upperCaseHeader ? dt.toUpperCase() : dt
+      ),
+    ],
   ];
 
   // adjust header rendering based on freezeHeaderNum
