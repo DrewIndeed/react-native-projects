@@ -20,10 +20,12 @@ interface DataItem {
 }
 interface FreezableTableProps {
   data: DataItem[];
-  firstCellContent?: string;
   width: number[];
+
+  firstCellContent?: string;
   freezeColNum?: number;
   freezeHeaderNum?: number;
+
   borderWidth?: number;
   marginTop?: number;
   marginBottom?: number;
@@ -133,7 +135,9 @@ export default function FreezableTable(props: FreezableTableProps) {
       firstCell: {
         style: {
           ...commonCellsStyles,
-          opacity: 1, // ! Toggle display of first cell of header / freeze column here
+
+          // ! Toggle display of first cell of header / freeze column here
+          opacity: 1,
           display: hidden ? 'flex' : 'none',
           backgroundColor: props.bgColors?.cornerCell || '#fff',
           color: props.textColors?.cornerCell || '#000',

@@ -2,6 +2,34 @@
 import testData from './testData.js';
 import FreezableTable from './FreezableTable';
 
+/**
+ interface FreezableTableProps {
+  data: DataItem[];           REQUIRED, array of objects with consistent number of keys
+  width: number[];            REQUIRED, length = data keys number + 1
+
+  firstCellContent?: string;   OPTIONAL, desc: text content of the top left corner cell
+  freezeColNum?: number;      OPTIONAL, desc: number of freeze column from left to right, default = 1
+  freezeHeaderNum?: number;   OPTIONAL, desc: number of freeze header from top to bottom, default = 1
+  
+  borderWidth?: number;
+  marginTop?: number;
+  marginBottom?: number;
+
+  bgColors?: {
+    cornerCell?: string;
+    header?: string;
+    freezeColumn?: string;
+    body?: string;
+  };
+
+  textColors?: {
+    cornerCell?: string;
+    header?: string;
+    freezeColumn?: string;
+    body?: string;
+  };
+}
+*/
 export default function App() {
   return (
     <FreezableTable
