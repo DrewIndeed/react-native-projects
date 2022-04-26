@@ -22,8 +22,10 @@ interface FreezableTableProps {
   data: DataItem[];
   headers: string[];
   width: number[];
+  freezeColNum?: number;
   borderWidth?: number;
-  marginVertical?: number;
+  marginTop?: number;
+  marginBottom?: number;
   bgColors?: {
     cornerCell?: string;
     header?: string;
@@ -40,7 +42,7 @@ interface FreezableTableProps {
 
 export default function FreezableTable(props: FreezableTableProps) {
   // props destructoring
-  const { data, headers, width } = props;
+  const { data, headers, width, freezeColNum } = props;
 
   // error handling
   if (!data || data.length === 0)
@@ -67,9 +69,18 @@ export default function FreezableTable(props: FreezableTableProps) {
       "[FreezableTable Error]: Value must be greater than 0 in 'width' array"
     );
 
+  if (freezeColNum && freezeColNum < 1)
+    throw new Error(
+      '[FreezableTable Error]: Value must be at least 1 for freezeColNum, otherwise leave blank with default value as 1 '
+    );
   // anim values tracking refs
   const headerOffsetX = useRef(new Animated.Value(0)).current;
   const freezeColOffsetY = useRef(new Animated.Value(0)).current;
+
+  // accumulate width values if freezeColNum is defined
+  let accWidth = 0;
+  for (let i = 0; i < (freezeColNum ? freezeColNum : 1); i++)
+    accWidth += props.width[i];
 
   // header row component
   const HeaderRow = ({ hidden }: { hidden: boolean }) => {
@@ -121,7 +132,7 @@ export default function FreezableTable(props: FreezableTableProps) {
         {props.headers.map((content: string, idx: number) => (
           <Text
             style={[
-              idx === 0
+              (props.freezeColNum ? idx < props.freezeColNum : idx < 1)
                 ? headerCellsStyles.firstCell.style
                 : headerCellsStyles.otherCells.style,
               { width: props.width[idx] },
@@ -184,7 +195,7 @@ export default function FreezableTable(props: FreezableTableProps) {
         {dataRowContainer.map((data: string, idx: number) => (
           <Text
             style={[
-              idx === 0
+              (props.freezeColNum ? idx < props.freezeColNum : idx < 1)
                 ? dataRowStyles.firstCell.style
                 : dataRowStyles.otherCells.style,
               { width: props.width[idx] },
@@ -202,7 +213,10 @@ export default function FreezableTable(props: FreezableTableProps) {
     <View
       style={[
         styles.mainContainer,
-        { marginVertical: props.marginVertical || 0 },
+        {
+          marginTop: props.marginTop || 0,
+          marginBottom: props.marginBottom || 0,
+        },
       ]}
     >
       {/* beneath table to display freeze column */}
@@ -228,7 +242,7 @@ export default function FreezableTable(props: FreezableTableProps) {
                   },
                 ],
               },
-            ]} // ! TO SCROLL VERTICALLY COMPLETELY
+            ]}
             bounces={false}
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
@@ -247,7 +261,7 @@ export default function FreezableTable(props: FreezableTableProps) {
 
       {/* float table to display scrollable table */}
       {/* ! CONDITION for marginLeft: must have to display freeze column from underneath table */}
-      <View style={[styles.scrollableTable, { marginLeft: props.width[0] }]}>
+      <View style={[styles.scrollableTable, { marginLeft: accWidth }]}>
         <HeaderRow hidden={false} />
 
         <ScrollView
@@ -304,7 +318,9 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     flexDirection: 'row',
-    overflow: 'hidden', // ! CONDITION: must have to hide freeze column vertical overflow
+
+    // ! CONDITION: must have to hide freeze column vertical overflow
+    overflow: 'hidden',
   },
   headerRowContainer: {
     flexDirection: 'row',
@@ -319,6 +335,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: 'transparent',
-    overflow: 'hidden', // ! CONDITION: must have to hide header horizontal overflow
+
+    // ! CONDITION: must have to hide header horizontal overflow
+    overflow: 'hidden',
   },
 });

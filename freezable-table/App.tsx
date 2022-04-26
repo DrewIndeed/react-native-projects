@@ -8,7 +8,8 @@ export default function App() {
       data={testData}
       headers={['id', 'name', 'phone', 'email', 'address', 'country']}
       width={[100, 175, 175, 275, 250, 175]}
-      marginVertical={40}
+      freezeColNum={1}
+      marginTop={40}
       bgColors={{
         cornerCell: 'cyan',
         header: 'lime',
