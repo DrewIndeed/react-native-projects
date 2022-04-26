@@ -20,9 +20,10 @@ interface DataItem {
 }
 interface FreezableTableProps {
   data: DataItem[];
-  headers: string[];
+  firstCellContent?: string;
   width: number[];
   freezeColNum?: number;
+  freezeHeaderNum?: number;
   borderWidth?: number;
   marginTop?: number;
   marginBottom?: number;
@@ -42,19 +43,11 @@ interface FreezableTableProps {
 
 export default function FreezableTable(props: FreezableTableProps) {
   // props destructoring
-  const { data, headers, width, freezeColNum } = props;
+  const { data, width, freezeColNum } = props;
 
   // error handling
   if (!data || data.length === 0)
     throw new Error('[FreezableTable Error]: There is no data to render');
-
-  if (headers.length === 0)
-    throw new Error('[FreezableTable Error]: At least 1 header must present');
-
-  if (headers.length !== Object.keys(data[0]).length + 1)
-    throw new Error(
-      "[FreezableTable Error]: Invalid length for 'headers' array"
-    );
 
   if (width.length === 0)
     throw new Error(
@@ -71,7 +64,15 @@ export default function FreezableTable(props: FreezableTableProps) {
 
   if (freezeColNum && freezeColNum < 1)
     throw new Error(
-      '[FreezableTable Error]: Value must be at least 1 for freezeColNum, otherwise leave blank with default value as 1 '
+      '[FreezableTable Error]: Value must be greater or equal to 1 for freezeColNum, otherwise leave blank with default value as 1'
+    );
+
+  if (
+    props.freezeHeaderNum &&
+    (props.freezeHeaderNum > props.data.length || props.freezeHeaderNum < 1)
+  )
+    throw new Error(
+      '[FreezableTable Error]: Value must be greater or equal to 1 for freezeHeaderNum, otherwise leave blank with default value as 1'
     );
   // anim values tracking refs
   const headerOffsetX = useRef(new Animated.Value(0)).current;
@@ -82,8 +83,35 @@ export default function FreezableTable(props: FreezableTableProps) {
   for (let i = 0; i < (freezeColNum ? freezeColNum : 1); i++)
     accWidth += props.width[i];
 
+  // header row data
+  const headerRowDataFrame = [
+    [props.firstCellContent || '', ...Object.keys(props.data[0])],
+  ];
+
+  // adjust header rendering based on freezeHeaderNum
+  if (
+    props.freezeHeaderNum &&
+    headerRowDataFrame.length <= props.data.length - 1
+  ) {
+    for (let i = 0; i < props.freezeHeaderNum - 1; i++) {
+      const extraHeaderData = Object.values(
+        props.data[headerRowDataFrame.length - 1]
+      );
+
+      headerRowDataFrame.push([
+        headerRowDataFrame.length.toString(),
+        ...extraHeaderData,
+      ]);
+    }
+  }
   // header row component
-  const HeaderRow = ({ hidden }: { hidden: boolean }) => {
+  const HeaderRow = ({
+    hidden,
+    headerRowData,
+  }: {
+    hidden: boolean;
+    headerRowData: string[];
+  }) => {
     // styles container for first and following cells
     const commonCellsStyles: StyleProp<TextStyle> = {
       borderWidth: props.borderWidth || 1,
@@ -129,7 +157,7 @@ export default function FreezableTable(props: FreezableTableProps) {
           },
         ]}
       >
-        {props.headers.map((content: string, idx: number) => (
+        {headerRowData.map((content: string, idx: number) => (
           <Text
             style={[
               (props.freezeColNum ? idx < props.freezeColNum : idx < 1)
@@ -221,7 +249,9 @@ export default function FreezableTable(props: FreezableTableProps) {
     >
       {/* beneath table to display freeze column */}
       <View style={[styles.freezeColTable]}>
-        <HeaderRow hidden />
+        {headerRowDataFrame.map((headerRowArr) => (
+          <HeaderRow headerRowData={headerRowArr} hidden />
+        ))}
 
         <ScrollView
           bounces={false}
@@ -247,14 +277,20 @@ export default function FreezableTable(props: FreezableTableProps) {
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
           >
-            {props.data.map((item, idx) => (
-              <DataRow
-                key={getRandomNumberBetween(0, props.data.length * 1000000)}
-                dataItem={item}
-                rowOrder={idx}
-                hidden
-              />
-            ))}
+            {props.data
+              .slice(props.freezeHeaderNum ? props.freezeHeaderNum - 1 : 0)
+              .map((item, idx) => (
+                <DataRow
+                  key={getRandomNumberBetween(0, props.data.length * 1000000)}
+                  dataItem={item}
+                  rowOrder={
+                    props.freezeHeaderNum
+                      ? idx + (props.freezeHeaderNum - 1)
+                      : idx
+                  }
+                  hidden
+                />
+              ))}
           </Animated.ScrollView>
         </ScrollView>
       </View>
@@ -262,7 +298,9 @@ export default function FreezableTable(props: FreezableTableProps) {
       {/* float table to display scrollable table */}
       {/* ! CONDITION for marginLeft: must have to display freeze column from underneath table */}
       <View style={[styles.scrollableTable, { marginLeft: accWidth }]}>
-        <HeaderRow hidden={false} />
+        {headerRowDataFrame.map((headerRowArr) => (
+          <HeaderRow headerRowData={headerRowArr} hidden={false} />
+        ))}
 
         <ScrollView
           bounces={false}
@@ -299,14 +337,20 @@ export default function FreezableTable(props: FreezableTableProps) {
               { useNativeDriver: false }
             )}
           >
-            {props.data.map((item, idx) => (
-              <DataRow
-                key={getRandomNumberBetween(0, props.data.length * 1000000)}
-                dataItem={item}
-                rowOrder={idx}
-                hidden={false}
-              />
-            ))}
+            {props.data
+              .slice(props.freezeHeaderNum ? props.freezeHeaderNum - 1 : 0)
+              .map((item, idx) => (
+                <DataRow
+                  key={getRandomNumberBetween(0, props.data.length * 1000000)}
+                  dataItem={item}
+                  rowOrder={
+                    props.freezeHeaderNum
+                      ? idx + (props.freezeHeaderNum - 1)
+                      : idx
+                  }
+                  hidden={false}
+                />
+              ))}
           </ScrollView>
         </ScrollView>
       </View>

@@ -6,8 +6,9 @@ export default function App() {
   return (
     <FreezableTable
       data={testData}
-      headers={['id', 'name', 'phone', 'email', 'address', 'country']}
+      firstCellContent="count"
       width={[100, 175, 175, 275, 250, 175]}
+      freezeHeaderNum={1}
       freezeColNum={1}
       marginTop={40}
       bgColors={{
