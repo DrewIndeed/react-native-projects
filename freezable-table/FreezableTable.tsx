@@ -59,10 +59,22 @@ interface FreezableTableProps {
   };
 }
 
-export default function FreezableTable(props: FreezableTableProps) {
-  // props destructoring
-  const { data, width, freezeColNum } = props;
-
+export default function FreezableTable({
+  data,
+  width,
+  freezeColNum,
+  freezeHeaderNum,
+  firstCellContent,
+  boldHeader,
+  boldFreezeCol,
+  capHeader,
+  upperHeader,
+  borderWidth,
+  marginTop,
+  marginBottom,
+  bgColors,
+  textColors,
+}: FreezableTableProps) {
   // error handling
   if (!data || data.length === 0)
     throw new Error('[FreezableTable Error]: There is no data to render');
@@ -85,10 +97,7 @@ export default function FreezableTable(props: FreezableTableProps) {
       '[FreezableTable Error]: Value must be greater or equal to 1 for freezeColNum, otherwise leave blank with default value as 1'
     );
 
-  if (
-    props.freezeHeaderNum &&
-    (props.freezeHeaderNum > props.data.length || props.freezeHeaderNum < 1)
-  )
+  if (freezeHeaderNum && (freezeHeaderNum > data.length || freezeHeaderNum < 1))
     throw new Error(
       '[FreezableTable Error]: Value must be greater or equal to 1 for freezeHeaderNum, otherwise leave blank with default value as 1'
     );
@@ -99,18 +108,18 @@ export default function FreezableTable(props: FreezableTableProps) {
   // accumulate width values if freezeColNum is defined
   let accWidth = 0;
   for (let i = 0; i < (freezeColNum ? freezeColNum : 1); i++)
-    accWidth += props.width[i];
+    accWidth += width[i];
 
   // header row data
   const headerRowDataFrame = [
     [
-      props.firstCellContent || '',
-      ...Object.keys(props.data[0]).map((dt) =>
-        props.capHeader
-          ? props.upperHeader
+      firstCellContent || '',
+      ...Object.keys(data[0]).map((dt) =>
+        capHeader
+          ? upperHeader
             ? capitalizeWords(dt).toUpperCase()
             : capitalizeWords(dt)
-          : props.upperHeader
+          : upperHeader
           ? dt.toUpperCase()
           : dt
       ),
@@ -118,13 +127,10 @@ export default function FreezableTable(props: FreezableTableProps) {
   ];
 
   // adjust header rendering based on freezeHeaderNum
-  if (
-    props.freezeHeaderNum &&
-    headerRowDataFrame.length <= props.data.length - 1
-  ) {
-    for (let i = 0; i < props.freezeHeaderNum - 1; i++) {
+  if (freezeHeaderNum && headerRowDataFrame.length <= data.length - 1) {
+    for (let i = 0; i < freezeHeaderNum - 1; i++) {
       const extraHeaderData = Object.values(
-        props.data[headerRowDataFrame.length - 1]
+        data[headerRowDataFrame.length - 1]
       );
 
       headerRowDataFrame.push([
@@ -143,11 +149,11 @@ export default function FreezableTable(props: FreezableTableProps) {
   }) => {
     // styles container for first and following cells
     const commonCellsStyles: StyleProp<TextStyle> = {
-      borderWidth: props.borderWidth || 1,
+      borderWidth: borderWidth || 1,
       padding: 10,
-      backgroundColor: props.bgColors?.header || '#fff',
-      fontWeight: props.boldHeader ? 'bold' : 'normal',
-      color: props.textColors?.header || '#000',
+      backgroundColor: bgColors?.header || '#fff',
+      fontWeight: boldHeader ? 'bold' : 'normal',
+      color: textColors?.header || '#000',
       textAlign: 'center',
     };
     const headerCellsStyles: {
@@ -166,8 +172,8 @@ export default function FreezableTable(props: FreezableTableProps) {
           // ! Toggle display of first cell of header / freeze column here
           opacity: 1,
           display: hidden ? 'flex' : 'none',
-          backgroundColor: props.bgColors?.cornerCell || '#fff',
-          color: props.textColors?.cornerCell || '#000',
+          backgroundColor: bgColors?.cornerCell || '#fff',
+          color: textColors?.cornerCell || '#000',
         },
       },
     };
@@ -191,14 +197,14 @@ export default function FreezableTable(props: FreezableTableProps) {
         {headerRowData.map((content: string, idx: number) => (
           <Text
             style={[
-              (props.freezeColNum ? idx < props.freezeColNum : idx < 1)
+              (freezeColNum ? idx < freezeColNum : idx < 1)
                 ? headerCellsStyles.firstCell.style
                 : headerCellsStyles.otherCells.style,
-              { width: props.width[idx] },
+              { width: width[idx] },
             ]}
             key={`Header Render ${getRandomNumberBetween(
               0,
-              props.data.length * 1000000
+              data.length * 1000000
             )}`}
           >
             {content}
@@ -226,7 +232,7 @@ export default function FreezableTable(props: FreezableTableProps) {
 
     // styles container for first and following cells
     const commonCellsStyles: StyleProp<TextStyle> = {
-      borderWidth: props.borderWidth || 1,
+      borderWidth: borderWidth || 1,
       textAlign: 'center',
       padding: 10,
     };
@@ -237,17 +243,17 @@ export default function FreezableTable(props: FreezableTableProps) {
       firstCell: {
         style: {
           ...commonCellsStyles,
-          backgroundColor: props.bgColors?.freezeColumn || '#ffff',
-          color: props.textColors?.freezeColumn || '#000',
+          backgroundColor: bgColors?.freezeColumn || '#ffff',
+          color: textColors?.freezeColumn || '#000',
           display: hidden ? 'flex' : 'none',
-          fontWeight: props.boldFreezeCol ? 'bold' : 'normal',
+          fontWeight: boldFreezeCol ? 'bold' : 'normal',
         },
       },
       otherCells: {
         style: {
           ...commonCellsStyles,
-          backgroundColor: props.bgColors?.body || '#fff',
-          color: props.textColors?.body || '#000',
+          backgroundColor: bgColors?.body || '#fff',
+          color: textColors?.body || '#000',
           opacity: hidden ? 0 : 1,
         },
       },
@@ -258,14 +264,14 @@ export default function FreezableTable(props: FreezableTableProps) {
         {dataRowContainer.map((data: string, idx: number) => (
           <Text
             style={[
-              (props.freezeColNum ? idx < props.freezeColNum : idx < 1)
+              (freezeColNum ? idx < freezeColNum : idx < 1)
                 ? dataRowStyles.firstCell.style
                 : dataRowStyles.otherCells.style,
-              { width: props.width[idx] },
+              { width: width[idx] },
             ]}
             key={`Data Row Render ${getRandomNumberBetween(
               0,
-              props.data.length * 1000000
+              data.length * 1000000
             )}`}
           >
             {data}
@@ -280,8 +286,8 @@ export default function FreezableTable(props: FreezableTableProps) {
       style={[
         styles.mainContainer,
         {
-          marginTop: props.marginTop || 0,
-          marginBottom: props.marginBottom || 0,
+          marginTop: marginTop || 0,
+          marginBottom: marginBottom || 0,
         },
       ]}
     >
@@ -291,7 +297,7 @@ export default function FreezableTable(props: FreezableTableProps) {
           <HeaderRow
             key={`Header Frame Hidden Table Render ${getRandomNumberBetween(
               0,
-              props.data.length * 1000000
+              data.length * 1000000
             )}`}
             headerRowData={headerRowArr}
             hidden
@@ -322,20 +328,16 @@ export default function FreezableTable(props: FreezableTableProps) {
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
           >
-            {props.data
-              .slice(props.freezeHeaderNum ? props.freezeHeaderNum - 1 : 0)
+            {data
+              .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
               .map((item, idx) => (
                 <DataRow
                   key={`Hidden Table Render ${getRandomNumberBetween(
                     0,
-                    props.data.length * 1000000
+                    data.length * 1000000
                   )}`}
                   dataItem={item}
-                  rowOrder={
-                    props.freezeHeaderNum
-                      ? idx + (props.freezeHeaderNum - 1)
-                      : idx
-                  }
+                  rowOrder={freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx}
                   hidden
                 />
               ))}
@@ -350,7 +352,7 @@ export default function FreezableTable(props: FreezableTableProps) {
           <HeaderRow
             key={`Header Frame Scrollable Table Render ${getRandomNumberBetween(
               0,
-              props.data.length * 1000000
+              data.length * 1000000
             )}`}
             headerRowData={headerRowArr}
             hidden={false}
@@ -392,20 +394,16 @@ export default function FreezableTable(props: FreezableTableProps) {
               { useNativeDriver: false }
             )}
           >
-            {props.data
-              .slice(props.freezeHeaderNum ? props.freezeHeaderNum - 1 : 0)
+            {data
+              .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
               .map((item, idx) => (
                 <DataRow
                   key={`Scrollable Table Render ${getRandomNumberBetween(
                     0,
-                    props.data.length * 1000000
+                    data.length * 1000000
                   )}`}
                   dataItem={item}
-                  rowOrder={
-                    props.freezeHeaderNum
-                      ? idx + (props.freezeHeaderNum - 1)
-                      : idx
-                  }
+                  rowOrder={freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx}
                   hidden={false}
                 />
               ))}
