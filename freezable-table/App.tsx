@@ -38,25 +38,29 @@ import FreezableTable from './FreezableTable';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>My FreezableTable</Text>
       <FreezableTable
-        data={testData}
-        width={[100, 175, 175, 275, 250, 175]}
-        // freezeHeaderNum={2}
-        // freezeColNum={2}
+        data={testData.slice(0, 4)}
+        width={[75, 150, 175, 275, 250, 175]}
+        freezeHeaderNum={0}
+        freezeColNum={0}
+        
+        mainContainerStyles={{
+          marginVertical: 40,
+          marginHorizontal: 10,
+        }}
         // firstCellContent="count"
-
         // boldHeader={true}
         // boldFreezeCol={true}
         // capHeader={true}
         // upperHeader={true}
 
-        // bgColors={{
-        //   cornerCell: 'cyan',
-        //   header: 'lime',
-        //   freezeColumn: 'lightpink',
-        //   body: 'white',
-        // }}
+        bgColors={{
+          cornerCell: 'cyan',
+          header: 'lime',
+          freezeColumn: 'lightpink',
+          body: 'white',
+        }}
+
         // textColors={{
         //   cornerCell: '#000',
         //   header: '#000',
@@ -71,7 +75,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginVertical: 40,
   },
   title: {
     fontSize: 25,

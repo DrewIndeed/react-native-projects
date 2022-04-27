@@ -32,19 +32,18 @@ interface DataItem {
 interface FreezableTableProps {
   data: DataItem[];
   width: number[];
-
-  firstCellContent?: string;
   freezeColNum?: number;
   freezeHeaderNum?: number;
 
+  mainContainerStyles?: StyleProp<{}>;
+
+  firstCellContent?: string;
   boldHeader?: boolean;
   boldFreezeCol?: boolean;
   capHeader?: boolean;
   upperHeader?: boolean;
 
   borderWidth?: number;
-  marginTop?: number;
-  marginBottom?: number;
   bgColors?: {
     cornerCell?: string;
     header?: string;
@@ -64,14 +63,13 @@ export default function FreezableTable({
   width,
   freezeColNum,
   freezeHeaderNum,
+  mainContainerStyles,
   firstCellContent,
   boldHeader,
   boldFreezeCol,
   capHeader,
   upperHeader,
   borderWidth,
-  marginTop,
-  marginBottom,
   bgColors,
   textColors,
 }: FreezableTableProps) {
@@ -103,6 +101,30 @@ export default function FreezableTable({
     throw new Error(
       '[FreezableTable Error]: Value must be greater or equal to 1 for freezeHeaderNum, otherwise leave blank with default value as 1'
     );
+
+  if (mainContainerStyles) {
+    // unsupported styles array for mainContainerStyles
+    const SUPPORTED_STYLES: string[] = ['margin', 'border', 'background'];
+    let isValid: boolean = false;
+
+    Object.keys(mainContainerStyles).map((styleKey) => {
+      isValid = false;
+      
+      for (let i = 0; i < SUPPORTED_STYLES.length; i++) {
+        const element = SUPPORTED_STYLES[i];
+        if (styleKey.includes(element)) {
+          isValid = true;
+          break;
+        }
+      }
+    });
+
+    if (!isValid)
+      throw new Error(
+        `[FreezableTable Error]: mainContainerStyles only supports styles relating to: 'margin', 'border', 'background'`
+      );
+  }
+
   // anim values tracking refs
   const headerOffsetX = useRef(new Animated.Value(0)).current;
   const freezeColOffsetY = useRef(new Animated.Value(0)).current;
@@ -284,15 +306,7 @@ export default function FreezableTable({
   };
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {
-          marginTop: marginTop || 0,
-          marginBottom: marginBottom || 0,
-        },
-      ]}
-    >
+    <View style={[styles.mainContainer, mainContainerStyles]}>
       {/* beneath table to display freeze column */}
       <View style={[styles.freezeColTable]}>
         {headerRowDataFrame.map((headerRowArr) => (
@@ -314,7 +328,6 @@ export default function FreezableTable({
         >
           <Animated.ScrollView
             style={[
-              { paddingBottom: 16 },
               {
                 transform: [
                   {
