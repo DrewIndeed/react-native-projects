@@ -1,4 +1,4 @@
-// import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import testData from './testData.js';
 import FreezableTable from './FreezableTable';
 
@@ -37,31 +37,45 @@ import FreezableTable from './FreezableTable';
 */
 export default function App() {
   return (
-    <FreezableTable
-      data={testData}
-      width={[100, 175, 175, 275, 250, 175]}
-      // freezeHeaderNum={2}
-      // freezeColNum={2}
-      // firstCellContent="count"
+    <View style={styles.container}>
+      <Text style={styles.title}>My FreezableTable</Text>
+      <FreezableTable
+        data={testData}
+        width={[100, 175, 175, 275, 250, 175]}
+        // freezeHeaderNum={2}
+        // freezeColNum={2}
+        // firstCellContent="count"
 
-      // boldHeader={true}
-      // boldFreezeCol={true}
-      // capHeader={true}
-      // upperHeader={true}
+        // boldHeader={true}
+        // boldFreezeCol={true}
+        // capHeader={true}
+        // upperHeader={true}
 
-      marginTop={40}
-      // bgColors={{
-      //   cornerCell: 'cyan',
-      //   header: 'lime',
-      //   freezeColumn: 'lightpink',
-      //   body: 'white',
-      // }}
-      // textColors={{
-      //   cornerCell: '#000',
-      //   header: '#000',
-      //   freezeColumn: '#000',
-      //   body: '#000',
-      // }}
-    />
+        // bgColors={{
+        //   cornerCell: 'cyan',
+        //   header: 'lime',
+        //   freezeColumn: 'lightpink',
+        //   body: 'white',
+        // }}
+        // textColors={{
+        //   cornerCell: '#000',
+        //   header: '#000',
+        //   freezeColumn: '#000',
+        //   body: '#000',
+        // }}
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginVertical: 40,
+  },
+  title: {
+    fontSize: 25,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+});

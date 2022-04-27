@@ -85,7 +85,9 @@ export default function FreezableTable({
     );
 
   if (width.length !== Object.keys(data[0]).length + 1)
-    throw new Error("[FreezableTable Error]: Invalid length for 'width' array");
+    throw new Error(
+      "[FreezableTable Error]: Invalid length for 'width' array, must be same length as data keys amount"
+    );
 
   if (width.some((value) => value <= 0))
     throw new Error(
