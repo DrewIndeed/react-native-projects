@@ -11,6 +11,11 @@ import FreezableTable from './FreezableTable';
   freezeColNum?: number;      OPTIONAL, desc: number of freeze column from left to right, default = 1
   freezeHeaderNum?: number;   OPTIONAL, desc: number of freeze header from top to bottom, default = 1
   
+  boldHeader? boolean;
+  boldFreezeCol? boolean;
+  capHeader? boolean;         OPTIONAL, if capHeader AND upperHeader are set, header will be UPPERCASE
+  upperHeader? boolean;
+
   borderWidth?: number;
   marginTop?: number;
   marginBottom?: number;
@@ -35,11 +40,16 @@ export default function App() {
     <FreezableTable
       data={testData}
       width={[100, 175, 175, 275, 250, 175]}
-      marginTop={40}
+      // freezeHeaderNum={2}
+      // freezeColNum={2}
       // firstCellContent="count"
-      // freezeHeaderNum={1}
-      // upperCaseHeader={true}
-      // freezeColNum={1}
+
+      // boldHeader={true}
+      // boldFreezeCol={true}
+      // capHeader={true}
+      // upperHeader={true}
+
+      marginTop={40}
       // bgColors={{
       //   cornerCell: 'cyan',
       //   header: 'lime',
