@@ -14,10 +14,7 @@ import {
 function getRandomNumberBetween(min: number, max: number) {
   return Math.random() * (max - min + 1) + min;
 }
-//capitalize only the first letter of the string.
-function capitalizeFirstLetter(targetStr: string) {
-  return targetStr.charAt(0).toUpperCase() + targetStr.slice(1);
-}
+
 //capitalize all words of a targetStr.
 function capitalizeWords(targetStr: string) {
   return targetStr.replace(/(?:^|\s)\S/g, function (a) {
@@ -43,7 +40,7 @@ interface FreezableTableProps {
   capHeader?: boolean;
   upperHeader?: boolean;
 
-  borderWidth?: number;
+  innerBorderWidth?: number;
   bgColors?: {
     cornerCell?: string;
     header?: string;
@@ -69,7 +66,7 @@ export default function FreezableTable({
   boldFreezeCol,
   capHeader,
   upperHeader,
-  borderWidth,
+  innerBorderWidth,
   bgColors,
   textColors,
 }: FreezableTableProps) {
@@ -109,7 +106,7 @@ export default function FreezableTable({
 
     Object.keys(mainContainerStyles).map((styleKey) => {
       isValid = false;
-      
+
       for (let i = 0; i < SUPPORTED_STYLES.length; i++) {
         const element = SUPPORTED_STYLES[i];
         if (styleKey.includes(element)) {
@@ -167,13 +164,15 @@ export default function FreezableTable({
   const HeaderRow = ({
     hidden,
     headerRowData,
+    rowOrder,
   }: {
     hidden: boolean;
     headerRowData: string[];
+    rowOrder: number;
   }) => {
     // styles container for first and following cells
     const commonCellsStyles: StyleProp<TextStyle> = {
-      borderWidth: borderWidth || 1,
+      borderWidth: innerBorderWidth || 1,
       padding: 10,
       backgroundColor: bgColors?.header || '#fff',
       fontWeight: boldHeader ? 'bold' : 'normal',
@@ -226,10 +225,7 @@ export default function FreezableTable({
                 : headerCellsStyles.otherCells.style,
               { width: width[idx] },
             ]}
-            key={`Header Render ${getRandomNumberBetween(
-              0,
-              data.length * 1000000
-            )}`}
+            key={`freeze-row-${rowOrder}-cell-${idx}`}
           >
             {content}
           </Text>
@@ -256,7 +252,7 @@ export default function FreezableTable({
 
     // styles container for first and following cells
     const commonCellsStyles: StyleProp<TextStyle> = {
-      borderWidth: borderWidth || 1,
+      borderWidth: innerBorderWidth || 1,
       textAlign: 'center',
       padding: 10,
     };
@@ -293,10 +289,7 @@ export default function FreezableTable({
                 : dataRowStyles.otherCells.style,
               { width: width[idx] },
             ]}
-            key={`Data Row Render ${getRandomNumberBetween(
-              0,
-              data.length * 1000000
-            )}`}
+            key={`data-row-${rowOrder}-cell-${idx}`}
           >
             {data}
           </Text>
@@ -309,13 +302,11 @@ export default function FreezableTable({
     <View style={[styles.mainContainer, mainContainerStyles]}>
       {/* beneath table to display freeze column */}
       <View style={[styles.freezeColTable]}>
-        {headerRowDataFrame.map((headerRowArr) => (
+        {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
           <HeaderRow
-            key={`Header Frame Hidden Table Render ${getRandomNumberBetween(
-              0,
-              data.length * 1000000
-            )}`}
+            key={`freeze-row-${idx}-hidden`}
             headerRowData={headerRowArr}
+            rowOrder={idx}
             hidden
           />
         ))}
@@ -347,10 +338,9 @@ export default function FreezableTable({
               .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
               .map((item, idx) => (
                 <DataRow
-                  key={`Hidden Table Render ${getRandomNumberBetween(
-                    0,
-                    data.length * 1000000
-                  )}`}
+                  key={`data-row-${
+                    freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                  }-hidden`}
                   dataItem={item}
                   rowOrder={freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx}
                   hidden
@@ -363,13 +353,11 @@ export default function FreezableTable({
       {/* float table to display scrollable table */}
       {/* ! CONDITION for marginLeft: must have to display freeze column from underneath table */}
       <View style={[styles.scrollableTable, { marginLeft: accWidth }]}>
-        {headerRowDataFrame.map((headerRowArr) => (
+        {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
           <HeaderRow
-            key={`Header Frame Scrollable Table Render ${getRandomNumberBetween(
-              0,
-              data.length * 1000000
-            )}`}
+            key={`freeze-row-${idx}-scrollable`}
             headerRowData={headerRowArr}
+            rowOrder={idx}
             hidden={false}
           />
         ))}
@@ -413,10 +401,9 @@ export default function FreezableTable({
               .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
               .map((item, idx) => (
                 <DataRow
-                  key={`Scrollable Table Render ${getRandomNumberBetween(
-                    0,
-                    data.length * 1000000
-                  )}`}
+                  key={`data-row-${
+                    freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                  }-scrollable`}
                   dataItem={item}
                   rowOrder={freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx}
                   hidden={false}

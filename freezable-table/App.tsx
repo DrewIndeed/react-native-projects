@@ -39,15 +39,16 @@ export default function App() {
   return (
     <View style={styles.container}>
       <FreezableTable
-        data={testData.slice(0, 4)}
+        data={testData}
         width={[75, 150, 175, 275, 250, 175]}
         freezeHeaderNum={0}
         freezeColNum={0}
-        
         mainContainerStyles={{
           marginVertical: 40,
           marginHorizontal: 10,
+          borderWidth: 1,
         }}
+        // innerBorderWidth={3}
         // firstCellContent="count"
         // boldHeader={true}
         // boldFreezeCol={true}
