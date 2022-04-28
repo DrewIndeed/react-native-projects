@@ -73,14 +73,17 @@ export default function FreezableTable({
       "[FreezableTable Error]: Value must be greater than 0 in 'width' array"
     );
 
-  if (freezeColNum && freezeColNum < 1)
+  if (
+    freezeColNum &&
+    (freezeColNum > Object.keys(data[0]).length + 1 || freezeColNum < 0)
+  )
     throw new Error(
-      '[FreezableTable Error]: Value must be greater or equal to 1 for freezeColNum, otherwise leave blank with default value as 1'
+      '[FreezableTable Error]: Value must be greater or equal to 0 and less than data keys number for freezeColNum, otherwise leave blank with default value as 0'
     );
 
-  if (freezeHeaderNum && (freezeHeaderNum > data.length || freezeHeaderNum < 1))
+  if (freezeHeaderNum && (freezeHeaderNum > data.length || freezeHeaderNum < 0))
     throw new Error(
-      '[FreezableTable Error]: Value must be greater or equal to 1 for freezeHeaderNum, otherwise leave blank with default value as 1'
+      '[FreezableTable Error]: Value must be greater or equal to 0 and less than data row number for freezeHeaderNum, otherwise leave blank with default value as 0'
     );
 
   if (mainContainerStyles && Object.keys(mainContainerStyles).length > 0) {
@@ -135,7 +138,7 @@ export default function FreezableTable({
     }
   }
 
-  const cellValidate = (styleObj: object) => {
+  const validateCellStyles = (styleObj: object) => {
     // unsupported styles array for mainContainerStyles
     const SUPPORTED_STYLES: string[] = [
       'background',
@@ -170,12 +173,12 @@ export default function FreezableTable({
       );
   };
 
-  if (freezeRowStyles && Object.keys(freezeRowStyles!).length > 0)
-    cellValidate(freezeRowStyles!);
-  if (freezeColStyles && Object.keys(freezeColStyles!).length > 0)
-    cellValidate(freezeColStyles!);
-  if (bodyStyles && Object.keys(bodyStyles!).length > 0)
-    cellValidate(bodyStyles!);
+  if (freezeRowStyles && Object.keys(freezeRowStyles).length > 0)
+    validateCellStyles(freezeRowStyles);
+  if (freezeColStyles && Object.keys(freezeColStyles).length > 0)
+    validateCellStyles(freezeColStyles);
+  if (bodyStyles && Object.keys(bodyStyles).length > 0)
+    validateCellStyles(bodyStyles);
 
   // anim values tracking refs
   const headerOffsetX = useRef(new Animated.Value(0)).current;
@@ -347,8 +350,8 @@ export default function FreezableTable({
                 : dataRowStyles.otherCells.style,
               { width: width[idx] },
               rowOrder === 0 && freezeRowStyles,
-              rowOrder > 0 && idx === 0 && freezeColStyles,
-              rowOrder > 0 && idx > 0 && bodyStyles,
+              rowOrder >= 0 && idx === 0 && freezeColStyles,
+              rowOrder >= 0 && idx > 0 && bodyStyles,
             ]}
             key={`data-row-${rowOrder}-cell-${idx}`}
           >
@@ -359,98 +362,118 @@ export default function FreezableTable({
     );
   };
 
-  return (
-    <View style={[styles.mainContainer, mainContainerStyles]}>
-      {/* beneath table to display freeze column */}
-      <View style={[styles.freezeColTable]}>
-        {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
-          <HeaderRow
-            key={`freeze-row-${idx}-hidden`}
-            headerRowData={headerRowArr}
-            rowOrder={idx}
-            hidden
-          />
-        ))}
+  // pick what to render based on freezeColNum and freezeHeaderNum values
+  let isHorizontalOuter = false;
+  let isHorizontalInner = false;
+  const pickRenderCase = (): number => {
+    if (
+      (freezeHeaderNum &&
+        freezeHeaderNum === 0 &&
+        freezeColNum &&
+        freezeColNum === 0) ||
+      (!freezeHeaderNum && !freezeColNum) ||
+      (!freezeHeaderNum && freezeColNum && freezeColNum === 0) ||
+      (!freezeColNum && freezeHeaderNum && freezeHeaderNum === 0)
+    ) {
+      isHorizontalOuter = true;
+      return 2;
+    }
 
-        <ScrollView
-          bounces={false}
-          scrollEventThrottle={16}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-        >
-          <Animated.ScrollView
-            style={[
-              {
-                transform: [
-                  {
-                    translateY: Animated.multiply(
-                      freezeColOffsetY,
-                      new Animated.Value(-1)
-                    ),
-                  },
-                ],
-              },
-            ]}
-            bounces={false}
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
-          >
-            {data
-              .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
-              .map((item, idx) => (
-                <DataRow
-                  key={`data-row-${
-                    freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
-                  }-hidden`}
-                  dataItem={item}
-                  rowOrder={freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx}
-                  hidden
-                />
-              ))}
-          </Animated.ScrollView>
-        </ScrollView>
-      </View>
+    if (freezeColNum === 0 && freezeHeaderNum !== 0) {
+      isHorizontalOuter = true;
+      isHorizontalInner = true;
+      return 3;
+    }
 
-      {/* float table to display scrollable table */}
-      {/* ! CONDITION for marginLeft: must have to display freeze column from underneath table */}
-      <View style={[styles.scrollableTable, { marginLeft: accWidth }]}>
-        {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
-          <HeaderRow
-            key={`freeze-row-${idx}-scrollable`}
-            headerRowData={headerRowArr}
-            rowOrder={idx}
-            hidden={false}
-          />
-        ))}
+    if (freezeColNum !== 0 && freezeHeaderNum === 0) {
+      isHorizontalOuter = false;
+      isHorizontalInner = false;
+      return 4;
+    }
 
-        <ScrollView
-          bounces={false}
-          scrollEventThrottle={16}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    x: headerOffsetX,
-                  },
-                },
-              },
-            ],
-            { useNativeDriver: false }
-          )}
-        >
+    return 1;
+  };
+
+  // return picked case
+  const renderCase = pickRenderCase();
+  if (renderCase === 1) {
+    return (
+      <View style={[styles.mainContainer, mainContainerStyles]}>
+        {/* beneath table to display freeze column */}
+        <View style={[styles.freezeColTable]}>
+          {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
+            <HeaderRow
+              key={`freeze-row-${idx}-hidden`}
+              headerRowData={headerRowArr}
+              rowOrder={idx}
+              hidden
+            />
+          ))}
+
           <ScrollView
             bounces={false}
             scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          >
+            <Animated.ScrollView
+              style={[
+                {
+                  transform: [
+                    {
+                      translateY: Animated.multiply(
+                        freezeColOffsetY,
+                        new Animated.Value(-1)
+                      ),
+                    },
+                  ],
+                },
+              ]}
+              bounces={false}
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
+            >
+              {data
+                .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
+                .map((item, idx) => (
+                  <DataRow
+                    key={`data-row-${
+                      freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                    }-hidden`}
+                    dataItem={item}
+                    rowOrder={
+                      freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                    }
+                    hidden
+                  />
+                ))}
+            </Animated.ScrollView>
+          </ScrollView>
+        </View>
+
+        {/* float table to display scrollable table */}
+        {/* ! CONDITION for marginLeft: must have to display freeze column from underneath table */}
+        <View style={[styles.scrollableTable, { marginLeft: accWidth }]}>
+          {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
+            <HeaderRow
+              key={`freeze-row-${idx}-scrollable`}
+              headerRowData={headerRowArr}
+              rowOrder={idx}
+              hidden={false}
+            />
+          ))}
+
+          <ScrollView
+            bounces={false}
+            scrollEventThrottle={16}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
             onScroll={Animated.event(
               [
                 {
                   nativeEvent: {
                     contentOffset: {
-                      y: freezeColOffsetY,
+                      x: headerOffsetX,
                     },
                   },
                 },
@@ -458,23 +481,177 @@ export default function FreezableTable({
               { useNativeDriver: false }
             )}
           >
-            {data
-              .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
-              .map((item, idx) => (
-                <DataRow
-                  key={`data-row-${
-                    freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
-                  }-scrollable`}
-                  dataItem={item}
-                  rowOrder={freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx}
-                  hidden={false}
-                />
-              ))}
+            <ScrollView
+              bounces={false}
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: freezeColOffsetY,
+                      },
+                    },
+                  },
+                ],
+                { useNativeDriver: false }
+              )}
+            >
+              {data
+                .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
+                .map((item, idx) => (
+                  <DataRow
+                    key={`data-row-${
+                      freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                    }-scrollable`}
+                    dataItem={item}
+                    rowOrder={
+                      freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                    }
+                    hidden={false}
+                  />
+                ))}
+            </ScrollView>
           </ScrollView>
-        </ScrollView>
+        </View>
       </View>
-    </View>
-  );
+    );
+  } else {
+    return (
+      <ScrollView
+        bounces={false}
+        horizontal={isHorizontalOuter}
+        style={[styles.mainContainer, mainContainerStyles]}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+      >
+        <ScrollView
+          bounces={false}
+          horizontal={isHorizontalInner}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* beneath table to display freeze column */}
+          <View style={[styles.freezeColTable]}>
+            {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
+              <HeaderRow
+                key={`freeze-row-${idx}-hidden`}
+                headerRowData={headerRowArr}
+                rowOrder={idx}
+                hidden
+              />
+            ))}
+
+            <ScrollView
+              bounces={false}
+              scrollEventThrottle={16}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            >
+              <Animated.ScrollView
+                style={[
+                  {
+                    transform: [
+                      {
+                        translateY: Animated.multiply(
+                          freezeColOffsetY,
+                          new Animated.Value(-1)
+                        ),
+                      },
+                    ],
+                  },
+                ]}
+                bounces={false}
+                scrollEventThrottle={16}
+                showsVerticalScrollIndicator={false}
+              >
+                {data
+                  .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
+                  .map((item, idx) => (
+                    <DataRow
+                      key={`data-row-${
+                        freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                      }-hidden`}
+                      dataItem={item}
+                      rowOrder={
+                        freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                      }
+                      hidden
+                    />
+                  ))}
+              </Animated.ScrollView>
+            </ScrollView>
+          </View>
+
+          {/* float table to display scrollable table */}
+          {/* ! CONDITION for marginLeft: must have to display freeze column from underneath table */}
+          <View style={[styles.scrollableTable, { marginLeft: accWidth }]}>
+            {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
+              <HeaderRow
+                key={`freeze-row-${idx}-scrollable`}
+                headerRowData={headerRowArr}
+                rowOrder={idx}
+                hidden={false}
+              />
+            ))}
+
+            <ScrollView
+              bounces={false}
+              scrollEventThrottle={16}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        x: headerOffsetX,
+                      },
+                    },
+                  },
+                ],
+                { useNativeDriver: false }
+              )}
+            >
+              <ScrollView
+                bounces={false}
+                scrollEventThrottle={16}
+                showsVerticalScrollIndicator={false}
+                onScroll={Animated.event(
+                  [
+                    {
+                      nativeEvent: {
+                        contentOffset: {
+                          y: freezeColOffsetY,
+                        },
+                      },
+                    },
+                  ],
+                  { useNativeDriver: false }
+                )}
+              >
+                {data
+                  .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
+                  .map((item, idx) => (
+                    <DataRow
+                      key={`data-row-${
+                        freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                      }-scrollable`}
+                      dataItem={item}
+                      rowOrder={
+                        freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                      }
+                      hidden={false}
+                    />
+                  ))}
+              </ScrollView>
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </ScrollView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

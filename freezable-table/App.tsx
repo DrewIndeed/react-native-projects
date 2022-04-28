@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import testData from './testData.js';
 import FreezableTable from './FreezableTable';
 
@@ -25,11 +25,11 @@ export default function App() {
     <View style={styles.container}>
       <FreezableTable
         data={testData}
-        width={[75, 150, 175, 275, 250, 175]}
+        width={[75, 150, 175, 275, 300, 175]}
         firstCellContent="count"
 
-        freezeHeaderNum={5}
-        freezeColNum={2}
+        // freezeColNum={2}
+        // freezeHeaderNum={2}
 
         mainContainerStyles={{
           marginVertical: 40,
@@ -46,7 +46,7 @@ export default function App() {
           backgroundColor: 'lightyellow',
         }}
 
-        // capHeader={true}
+        capHeader={true}
         // upperHeader={true}
         // innerBorderWidth={3}
       />
