@@ -22,15 +22,39 @@ function capitalizeWords(targetStr: string) {
   });
 }
 
+// get a limited number of obj data
+function sliceDataObj(targetObj: object, limit: number) {
+  // if there is no limit return the whole obj
+  if (limit === 0) return targetObj;
+
+  // slice entries array of targetObj
+  const slicedEntries = Object.entries(targetObj).slice(0, limit);
+
+  // create new obj container after filtering
+  let filterObjContainer: { [key: string]: string } = {};
+
+  // populate new obj data
+  slicedEntries.map((entry: [string, string]) => {
+    filterObjContainer[entry[0] as keyof object] = entry[1];
+  });
+
+  // return new obj
+  return filterObjContainer;
+}
+
 /* TYPE HANDLING*/
+type Column = {
+  width?: number;
+  header?: string;
+};
 interface FreezableTableProps {
   data: object[];
   defaultWidth: number;
-  width: number[];
-  headers: string[];
+
+  columns: Column[];
 
   freezeColNum?: number;
-  freezeHeaderNum?: number;
+  freezeRowNum?: number;
 
   mainContainerStyles?: object;
   firstRowStyles?: object;
@@ -45,10 +69,9 @@ interface FreezableTableProps {
 export default function FreezableTable({
   data,
   defaultWidth,
-  width,
-  headers,
+  columns,
   freezeColNum,
-  freezeHeaderNum,
+  freezeRowNum,
   mainContainerStyles,
   firstRowStyles,
   firstColStyles,
@@ -61,21 +84,6 @@ export default function FreezableTable({
   if (!data || data.length === 0)
     throw new Error('[FreezableTable Error]: There is no data to render');
 
-  // if (width.length === 0)
-  //   throw new Error(
-  //     '[FreezableTable Error]: At least 1 column width value must present'
-  //   );
-
-  // if (width.length !== Object.keys(data[0]).length + 1)
-  //   throw new Error(
-  //     "[FreezableTable Error]: Invalid length for 'width' array, must be same length as data keys amount"
-  //   );
-
-  if (width && width.some((value) => value <= 0))
-    throw new Error(
-      "[FreezableTable Error]: Value must be greater than 0 in 'width' array"
-    );
-
   if (
     freezeColNum &&
     (freezeColNum > Object.keys(data[0]).length + 1 || freezeColNum < 0)
@@ -84,9 +92,9 @@ export default function FreezableTable({
       '[FreezableTable Error]: Value must be greater or equal to 0 and less than data keys number for freezeColNum, otherwise leave blank with default value as 0'
     );
 
-  if (freezeHeaderNum && (freezeHeaderNum > data.length || freezeHeaderNum < 0))
+  if (freezeRowNum && (freezeRowNum > data.length || freezeRowNum < 0))
     throw new Error(
-      '[FreezableTable Error]: Value must be greater or equal to 0 and less than data row number for freezeHeaderNum, otherwise leave blank with default value as 0'
+      '[FreezableTable Error]: Value must be greater or equal to 0 and less than data row number for freezeRowNum, otherwise leave blank with default value as 0'
     );
 
   if (mainContainerStyles && Object.keys(mainContainerStyles).length > 0) {
@@ -190,22 +198,46 @@ export default function FreezableTable({
   // accumulate width values if freezeColNum is defined
   let accWidth = defaultWidth;
 
-  if (width && width.length > 0) {
+  const widths = columns.reduce((container: number[], item: Column) => {
+    container.push(item.width ? item.width : defaultWidth);
+    return container;
+  }, []);
+
+  if (widths && widths.length > 0) {
     accWidth = 0;
     for (let i = 0; i < (freezeColNum ? freezeColNum : 1); i++)
-      accWidth += width[i];
+      accWidth += widths[i];
   }
 
   // header row data
-  const headerRowDataFrame = [];
-  // headers render source tracking
-  let headersSource;
+  const headers =
+    columns.length > 0
+      ? columns.reduce((container: string[], item: Column, idx: number) => {
+          container.push(item.header ? item.header : Object.keys(data[0])[idx]);
+          return container;
+        }, [])
+      : Object.keys(data[0]);
 
-  // adjust header rendering based on freezeHeaderNum
-  if (freezeHeaderNum && headerRowDataFrame.length <= data.length - 1) {
-    for (let i = 0; i < freezeHeaderNum - 1; i++) {
+  const headerRowDataFrame = [
+    [
+      ...headers.map((dt: any) => {
+        const finalDt = typeof dt !== 'string' ? dt.toString() : dt;
+        return capHeader
+          ? upperHeader
+            ? capitalizeWords(finalDt).toUpperCase()
+            : capitalizeWords(finalDt)
+          : upperHeader
+          ? finalDt.toUpperCase()
+          : finalDt;
+      }),
+    ],
+  ];
+
+  // adjust header rendering based on freezeRowNum
+  if (freezeRowNum && headerRowDataFrame.length <= data.length - 1) {
+    for (let i = 0; i < freezeRowNum - 1; i++) {
       const extraHeaderData: string[] = Object.values(
-        data[headerRowDataFrame.length - 1]
+        sliceDataObj(data[headerRowDataFrame.length - 1], headers.length)
       );
 
       headerRowDataFrame.push([...extraHeaderData]);
@@ -270,7 +302,7 @@ export default function FreezableTable({
               (freezeColNum ? idx < freezeColNum : idx < 1)
                 ? headerCellsStyles.firstCell.style
                 : headerCellsStyles.otherCells.style,
-              { width: width[idx] || defaultWidth },
+              { width: widths[idx] || defaultWidth },
               rowOrder === 0 && firstRowStyles,
               rowOrder > 0 && idx === 0 && firstColStyles,
               rowOrder > 0 && idx > 0 && bodyStyles,
@@ -333,7 +365,7 @@ export default function FreezableTable({
               (freezeColNum ? idx < freezeColNum : idx < 1)
                 ? dataRowStyles.firstCell.style
                 : dataRowStyles.otherCells.style,
-              { width: width[idx] || defaultWidth },
+              { width: widths[idx] || defaultWidth },
               rowOrder === 0 && firstRowStyles,
               rowOrder >= 0 && idx === 0 && firstColStyles,
               rowOrder >= 0 && idx > 0 && bodyStyles,
@@ -347,30 +379,36 @@ export default function FreezableTable({
     );
   };
 
-  // pick what to render based on freezeColNum and freezeHeaderNum values
+  // pick what to render based on freezeColNum and freezeRowNum values
   let isHorizontalOuter = false;
   let isHorizontalInner = false;
   const pickRenderCase = (): number => {
     if (
-      (freezeHeaderNum &&
-        freezeHeaderNum === 0 &&
+      (freezeRowNum &&
+        freezeRowNum === 0 &&
         freezeColNum &&
         freezeColNum === 0) ||
-      (!freezeHeaderNum && !freezeColNum) ||
-      (!freezeHeaderNum && freezeColNum && freezeColNum === 0) ||
-      (!freezeColNum && freezeHeaderNum && freezeHeaderNum === 0)
+      (!freezeRowNum && !freezeColNum) ||
+      (!freezeRowNum && freezeColNum && freezeColNum === 0) ||
+      (!freezeColNum && freezeRowNum && freezeRowNum === 0)
     ) {
       isHorizontalOuter = true;
       return 2;
     }
 
-    if (freezeColNum === 0 && freezeHeaderNum !== 0) {
+    if (
+      (freezeColNum === 0 && freezeRowNum !== 0) ||
+      (!freezeColNum && freezeRowNum && freezeRowNum !== 0)
+    ) {
       isHorizontalOuter = true;
       isHorizontalInner = true;
       return 3;
     }
 
-    if (freezeColNum !== 0 && freezeHeaderNum === 0) {
+    if (
+      (freezeColNum !== 0 && freezeRowNum === 0) ||
+      (!freezeRowNum && freezeColNum && freezeColNum !== 0)
+    ) {
       isHorizontalOuter = false;
       isHorizontalInner = false;
       return 4;
@@ -381,6 +419,8 @@ export default function FreezableTable({
 
   // return picked case
   const renderCase = pickRenderCase();
+  // alert(renderCase);
+
   if (renderCase === 1) {
     return (
       <View style={[styles.mainContainer, mainContainerStyles]}>
@@ -419,16 +459,14 @@ export default function FreezableTable({
               showsVerticalScrollIndicator={false}
             >
               {data
-                .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
+                .slice(freezeRowNum ? freezeRowNum - 1 : 0)
                 .map((item, idx) => (
                   <DataRow
                     key={`data-row-${
-                      freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                      freezeRowNum ? idx + (freezeRowNum - 1) : idx
                     }-hidden`}
-                    dataItem={item}
-                    rowOrder={
-                      freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
-                    }
+                    dataItem={sliceDataObj(item, headers.length)}
+                    rowOrder={freezeRowNum ? idx + (freezeRowNum - 1) : idx}
                     hidden
                   />
                 ))}
@@ -484,16 +522,14 @@ export default function FreezableTable({
               )}
             >
               {data
-                .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
+                .slice(freezeRowNum ? freezeRowNum - 1 : 0)
                 .map((item, idx) => (
                   <DataRow
                     key={`data-row-${
-                      freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                      freezeRowNum ? idx + (freezeRowNum - 1) : idx
                     }-scrollable`}
-                    dataItem={item}
-                    rowOrder={
-                      freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
-                    }
+                    dataItem={sliceDataObj(item, headers.length)}
+                    rowOrder={freezeRowNum ? idx + (freezeRowNum - 1) : idx}
                     hidden={false}
                   />
                 ))}
@@ -552,16 +588,14 @@ export default function FreezableTable({
                 showsVerticalScrollIndicator={false}
               >
                 {data
-                  .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
+                  .slice(freezeRowNum ? freezeRowNum - 1 : 0)
                   .map((item, idx) => (
                     <DataRow
                       key={`data-row-${
-                        freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                        freezeRowNum ? idx + (freezeRowNum - 1) : idx
                       }-hidden`}
-                      dataItem={item}
-                      rowOrder={
-                        freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
-                      }
+                      dataItem={sliceDataObj(item, headers.length)}
+                      rowOrder={freezeRowNum ? idx + (freezeRowNum - 1) : idx}
                       hidden
                     />
                   ))}
@@ -617,16 +651,14 @@ export default function FreezableTable({
                 )}
               >
                 {data
-                  .slice(freezeHeaderNum ? freezeHeaderNum - 1 : 0)
+                  .slice(freezeRowNum ? freezeRowNum - 1 : 0)
                   .map((item, idx) => (
                     <DataRow
                       key={`data-row-${
-                        freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
+                        freezeRowNum ? idx + (freezeRowNum - 1) : idx
                       }-scrollable`}
-                      dataItem={item}
-                      rowOrder={
-                        freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
-                      }
+                      dataItem={sliceDataObj(item, headers.length)}
+                      rowOrder={freezeRowNum ? idx + (freezeRowNum - 1) : idx}
                       hidden={false}
                     />
                   ))}
