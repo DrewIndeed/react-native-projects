@@ -2,25 +2,6 @@ import { View, StyleSheet } from 'react-native';
 import testData from './testData.js';
 import FreezableTable from './FreezableTable';
 
-/**
- interface FreezableTableProps {
-  data: object[];               REQUIRED, array of objects with consistent number of keys
-  defaultWidth: number;         REQUIRED, fallback width if column width is not defined
-  columns: Column[];            REQUIRED, array of objects 
-
-  freezeColNum?: number;        OPTIONAL, desc: number of freeze column from left to right, default = 0
-  freezeHeaderNum?: number;     OPTIONAL, desc: number of freeze header from top to bottom, default = 0
-
-  mainContainerStyles?: object;
-  freezeRowStyles?: object;
-  freezeColStyles?: object;
-  bodyStyles?: object;
-  
-  capHeader? boolean;           OPTIONAL, if capHeader AND upperHeader are set, header will be UPPERCASE
-  upperHeader? boolean;
-  innerBorderWidth?: number;
-}
-*/
 export default function App() {
   return (
     <View style={styles.container}>
@@ -31,28 +12,25 @@ export default function App() {
           {
             width: 150,
             header: 'Col 1',
+            key: 'country',
           },
           {
             width: 175,
             header: 'Col 2',
-          },
-          {
-            width: 275,
-            header: 'Col 3',
-          },
-          {
-            width: 300,
-            header: 'Col 4',
+            key: 'phone',
           },
           {
             width: 175,
-            header: 'Col 5',
+            header: 'Col 3',
+            key: 'name',
           },
         ]}
-        
-        // freezeColNum={1}
-        // freezeRowNum={0}
-
+        cellRenderer={(key, value, row) => {
+          console.log('cellrenderer', key, value, row);
+          return value;
+        }}
+        freezeColNum={0}
+        freezeRowNum={0}
         mainContainerStyles={{
           marginVertical: 40,
           borderWidth: 1,
