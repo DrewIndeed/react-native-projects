@@ -1,12 +1,12 @@
 import { View, StyleSheet } from 'react-native';
-import testData from './testData.js';
+import data from './data';
 import FreezableTable from './FreezableTable';
 
 export default function App() {
   return (
     <View style={styles.container}>
       <FreezableTable
-        data={testData}
+        data={data}
         defaultWidth={150}
         columns={[
           {
@@ -25,27 +25,28 @@ export default function App() {
             key: 'name',
           },
         ]}
-        cellRenderer={(key, value, row) => {
-          console.log('cellrenderer', key, value, row);
-          return value;
-        }}
-        freezeColNum={0}
-        freezeRowNum={0}
+        cellRenderer={(key, value, row) => value}
+
+        // freezeColNum={1}
+        // freezeRowNum={0}
+
         mainContainerStyles={{
-          marginVertical: 40,
+          marginVertical: 48,
           borderWidth: 1,
           flex: 1,
         }}
-        firstRowStyles={{
-          backgroundColor: 'lightgreen',
-        }}
-        firstColStyles={{
-          backgroundColor: 'lightpink',
-        }}
-        bodyStyles={{
-          backgroundColor: 'lightyellow',
-        }}
-        capHeader={true}
+
+        // firstRowStyles={{
+        //   backgroundColor: 'lightgreen',
+        // }}
+        // firstColStyles={{
+        //   backgroundColor: 'lightpink',
+        // }}
+        // bodyStyles={{
+        //   backgroundColor: 'lightyellow',
+        // }}
+
+        // capHeader={true}
         // upperHeader={true}
         // innerBorderWidth={3}
       />

@@ -1,0 +1,24 @@
+export type Column = {
+  width?: number;
+  header: string | number;
+  key: string;
+};
+
+export interface FreezableTableProps {
+  data: object[];
+  defaultWidth: number;
+  columns: Column[];
+
+  cellRenderer?: (key: any, value: any, row: any) => string;
+  freezeColNum?: number;
+  freezeRowNum?: number;
+
+  mainContainerStyles?: object;
+  firstRowStyles?: object;
+  firstColStyles?: object;
+  bodyStyles?: object;
+
+  capHeader?: boolean;
+  upperHeader?: boolean;
+  innerBorderWidth?: number;
+}
