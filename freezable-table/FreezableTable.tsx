@@ -26,15 +26,15 @@ function capitalizeWords(targetStr: string) {
 interface FreezableTableProps {
   data: object[];
   width: number[];
+  headers: string[];
   freezeColNum?: number;
   freezeHeaderNum?: number;
 
   mainContainerStyles?: object;
-  freezeRowStyles?: object;
-  freezeColStyles?: object;
+  firstRowStyles?: object;
+  firstColStyles?: object;
   bodyStyles?: object;
 
-  firstCellContent?: string;
   capHeader?: boolean;
   upperHeader?: boolean;
   innerBorderWidth?: number;
@@ -43,32 +43,32 @@ interface FreezableTableProps {
 export default function FreezableTable({
   data,
   width,
+  headers,
   freezeColNum,
   freezeHeaderNum,
   mainContainerStyles,
-  freezeRowStyles,
-  freezeColStyles,
+  firstRowStyles,
+  firstColStyles,
   bodyStyles,
-  firstCellContent,
   capHeader,
   upperHeader,
   innerBorderWidth,
 }: FreezableTableProps) {
-  // error handling
+  // ERROR HANDLING
   if (!data || data.length === 0)
     throw new Error('[FreezableTable Error]: There is no data to render');
 
-  if (width.length === 0)
-    throw new Error(
-      '[FreezableTable Error]: At least 1 column width value must present'
-    );
+  // if (width.length === 0)
+  //   throw new Error(
+  //     '[FreezableTable Error]: At least 1 column width value must present'
+  //   );
 
-  if (width.length !== Object.keys(data[0]).length + 1)
-    throw new Error(
-      "[FreezableTable Error]: Invalid length for 'width' array, must be same length as data keys amount"
-    );
+  // if (width.length !== Object.keys(data[0]).length + 1)
+  //   throw new Error(
+  //     "[FreezableTable Error]: Invalid length for 'width' array, must be same length as data keys amount"
+  //   );
 
-  if (width.some((value) => value <= 0))
+  if (width && width.some((value) => value <= 0))
     throw new Error(
       "[FreezableTable Error]: Value must be greater than 0 in 'width' array"
     );
@@ -87,7 +87,7 @@ export default function FreezableTable({
     );
 
   if (mainContainerStyles && Object.keys(mainContainerStyles).length > 0) {
-    // unsupported styles array for mainContainerStyles
+    // supported styles array for mainContainerStyles
     const SUPPORTED_STYLES: string[] = [
       'margin',
       'border',
@@ -122,24 +122,24 @@ export default function FreezableTable({
     if (Object.keys(mainContainerStyles).includes('width')) {
       if (!Object.keys(mainContainerStyles).includes('height'))
         throw new Error(
-          `[FreezableTable Error]: both 'width' and 'height' must present if one of them is defined`
+          `[FreezableTable Error]: both 'width' and 'height' must present if one of them is defined in mainContainerStyles`
         );
     } else if (Object.keys(mainContainerStyles).includes('height')) {
       if (!Object.keys(mainContainerStyles).includes('width'))
         throw new Error(
-          `[FreezableTable Error]: both 'width' and 'height' must present if one of them is defined`
+          `[FreezableTable Error]: both 'width' and 'height' must present if one of them is defined in mainContainerStyles`
         );
     } else {
       if (!Object.keys(mainContainerStyles).includes('flex')) {
         throw new Error(
-          `[FreezableTable Error]: 'flex: 1' must present if none of 'width' and 'height' is defined`
+          `[FreezableTable Error]: 'flex: 1' must present if none of 'width' and 'height' is defined in mainContainerStyles`
         );
       }
     }
   }
 
   const validateCellStyles = (styleObj: object) => {
-    // unsupported styles array for mainContainerStyles
+    // supported styles array for mainContainerStyles
     const SUPPORTED_STYLES: string[] = [
       'background',
       'border',
@@ -173,10 +173,10 @@ export default function FreezableTable({
       );
   };
 
-  if (freezeRowStyles && Object.keys(freezeRowStyles).length > 0)
-    validateCellStyles(freezeRowStyles);
-  if (freezeColStyles && Object.keys(freezeColStyles).length > 0)
-    validateCellStyles(freezeColStyles);
+  if (firstRowStyles && Object.keys(firstRowStyles).length > 0)
+    validateCellStyles(firstRowStyles);
+  if (firstColStyles && Object.keys(firstColStyles).length > 0)
+    validateCellStyles(firstColStyles);
   if (bodyStyles && Object.keys(bodyStyles).length > 0)
     validateCellStyles(bodyStyles);
 
@@ -192,16 +192,7 @@ export default function FreezableTable({
   // header row data
   const headerRowDataFrame = [
     [
-      (firstCellContent &&
-        (capHeader
-          ? upperHeader
-            ? capitalizeWords(firstCellContent).toUpperCase()
-            : capitalizeWords(firstCellContent)
-          : upperHeader
-          ? firstCellContent.toUpperCase()
-          : firstCellContent)) ||
-        '',
-      ...Object.keys(data[0]).map((dt) =>
+      ...headers.map((dt) =>
         capHeader
           ? upperHeader
             ? capitalizeWords(dt).toUpperCase()
@@ -220,10 +211,7 @@ export default function FreezableTable({
         data[headerRowDataFrame.length - 1]
       );
 
-      headerRowDataFrame.push([
-        headerRowDataFrame.length.toString(),
-        ...extraHeaderData,
-      ]);
+      headerRowDataFrame.push([...extraHeaderData]);
     }
   }
   // header row component
@@ -286,8 +274,8 @@ export default function FreezableTable({
                 ? headerCellsStyles.firstCell.style
                 : headerCellsStyles.otherCells.style,
               { width: width[idx] },
-              rowOrder === 0 && freezeRowStyles,
-              rowOrder > 0 && idx === 0 && freezeColStyles,
+              rowOrder === 0 && firstRowStyles,
+              rowOrder > 0 && idx === 0 && firstColStyles,
               rowOrder > 0 && idx > 0 && bodyStyles,
             ]}
             key={`freeze-row-${rowOrder}-cell-${idx}`}
@@ -310,7 +298,7 @@ export default function FreezableTable({
     hidden?: boolean;
   }) => {
     // generate data row cells content based on data
-    const dataRowContainer: string[] = [(rowOrder + 1).toString()];
+    const dataRowContainer: string[] = [];
     Object.keys(dataItem).forEach((key: string) => {
       dataRowContainer.push(dataItem[key as keyof object]);
     });
@@ -349,8 +337,8 @@ export default function FreezableTable({
                 ? dataRowStyles.firstCell.style
                 : dataRowStyles.otherCells.style,
               { width: width[idx] },
-              rowOrder === 0 && freezeRowStyles,
-              rowOrder >= 0 && idx === 0 && freezeColStyles,
+              rowOrder === 0 && firstRowStyles,
+              rowOrder >= 0 && idx === 0 && firstColStyles,
               rowOrder >= 0 && idx > 0 && bodyStyles,
             ]}
             key={`data-row-${rowOrder}-cell-${idx}`}
