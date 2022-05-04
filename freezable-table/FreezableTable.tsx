@@ -42,11 +42,16 @@ function sliceDataObj(targetObj: object, limit: number) {
   return filterObjContainer;
 }
 
+// custom type for Header Data
+type HeaderData = string | number;
+
 /* TYPE HANDLING*/
 interface FreezableTableProps {
   data: object[];
+  defaultWidth: number;
   width: number[];
-  headers: string[];
+  headers: HeaderData[];
+
   freezeColNum?: number;
   freezeHeaderNum?: number;
 
@@ -62,6 +67,7 @@ interface FreezableTableProps {
 
 export default function FreezableTable({
   data,
+  defaultWidth,
   width,
   headers,
   freezeColNum,
@@ -205,29 +211,42 @@ export default function FreezableTable({
   const freezeColOffsetY = useRef(new Animated.Value(0)).current;
 
   // accumulate width values if freezeColNum is defined
-  let accWidth = 0;
-  for (let i = 0; i < (freezeColNum ? freezeColNum : 1); i++)
-    accWidth += width[i];
+  let accWidth = defaultWidth;
+
+  if (width && width.length > 0) {
+    accWidth = 0;
+    for (let i = 0; i < (freezeColNum ? freezeColNum : 1); i++)
+      accWidth += width[i];
+  }
 
   // header row data
-  const headerRowDataFrame = [
-    [
-      ...headers.map((dt) =>
-        capHeader
-          ? upperHeader
-            ? capitalizeWords(dt).toUpperCase()
-            : capitalizeWords(dt)
-          : upperHeader
-          ? dt.toUpperCase()
-          : dt
-      ),
-    ],
-  ];
+  const headerRowDataFrame = [];
+  // headers render source tracking
+  let headersSource;
 
-  // adjust header rendering based on freezeHeaderNum
+  //  if there is an item in headers array, use headers array as source
+  if (headers.length > 0) headersSource = headers;
+  // otherwise, use data items keys
+  else headersSource = Object.keys(data[0]);
+
+  // push headers source content in Row DataFrame
+  headerRowDataFrame.push([
+    ...headersSource.map((dt: any) => {
+      const finalDt = typeof dt !== 'string' ? dt.toString() : dt;
+      return capHeader
+        ? upperHeader
+          ? capitalizeWords(finalDt).toUpperCase()
+          : capitalizeWords(finalDt)
+        : upperHeader
+        ? finalDt.toUpperCase()
+        : finalDt;
+    }),
+  ]);
+
+  // accumulate header rendering based on freezeHeaderNum
   if (freezeHeaderNum && headerRowDataFrame.length < data.length) {
     for (let i = 0; i < freezeHeaderNum - 1; i++) {
-      const extraHeaderData = Object.values(
+      const extraHeaderData: string[] = Object.values(
         sliceDataObj(data[headerRowDataFrame.length - 1], headers.length)
       );
 
@@ -294,7 +313,7 @@ export default function FreezableTable({
               (freezeColNum ? idx < freezeColNum : idx < 1)
                 ? headerCellsStyles.firstCell.style
                 : headerCellsStyles.otherCells.style,
-              { width: width[idx] },
+              { width: width[idx] || defaultWidth },
               rowOrder === 0 && firstRowStyles,
               rowOrder > 0 && idx === 0 && firstColStyles,
               rowOrder > 0 && idx > 0 && bodyStyles,
@@ -358,7 +377,7 @@ export default function FreezableTable({
               (freezeColNum ? idx < freezeColNum : idx < 1)
                 ? dataRowStyles.firstCell.style
                 : dataRowStyles.otherCells.style,
-              { width: width[idx] },
+              { width: width[idx] || defaultWidth },
               rowOrder === 0 && firstRowStyles,
               rowOrder >= 0 && idx === 0 && firstColStyles,
               rowOrder >= 0 && idx > 0 && bodyStyles,

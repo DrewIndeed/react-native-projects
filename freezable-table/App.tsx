@@ -24,10 +24,14 @@ export default function App() {
     <View style={styles.container}>
       <FreezableTable
         data={testData}
-        width={[150, 175, 275, 300, 175]}
-        headers={['col 1', 'col 2', 'col 3', 'col 4']}
-        // freezeColNum={1}
-        // freezeHeaderNum={2}
+        defaultWidth={150}
+
+        width={[]}
+        headers={['Col 1', 'Col 2', 'Col 3']}
+
+        freezeColNum={0}
+        freezeHeaderNum={2}
+
         mainContainerStyles={{
           marginVertical: 40,
           borderWidth: 1,
