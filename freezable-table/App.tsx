@@ -25,13 +25,10 @@ export default function App() {
       <FreezableTable
         data={testData}
         defaultWidth={150}
-
-        width={[]}
-        headers={['Col 1', 'Col 2', 'Col 3']}
-
-        freezeColNum={0}
+        width={[150, 175, 275, 300, 175]}
+        headers={['col 1', 'col 2', 'col 3', 'col 4', 'col 5']}
+        freezeColNum={1}
         freezeHeaderNum={2}
-
         mainContainerStyles={{
           marginVertical: 40,
           borderWidth: 1,

@@ -15,42 +15,19 @@ function getRandomNumberBetween(min: number, max: number) {
   return Math.random() * (max - min + 1) + min;
 }
 
-// capitalize all words of a targetStr.
+//capitalize all words of a targetStr.
 function capitalizeWords(targetStr: string) {
   return targetStr.replace(/(?:^|\s)\S/g, function (a) {
     return a.toUpperCase();
   });
 }
 
-// get a limited number of obj data
-function sliceDataObj(targetObj: object, limit: number) {
-  // if there is no limit return the whole obj
-  if (limit === 0) return targetObj;
-
-  // slice entries array of targetObj
-  const slicedEntries = Object.entries(targetObj).slice(0, limit);
-
-  // create new obj container after filtering
-  let filterObjContainer: { [key: string]: string } = {};
-
-  // populate new obj data
-  slicedEntries.map((entry: [string, string]) => {
-    filterObjContainer[entry[0] as keyof object] = entry[1];
-  });
-
-  // return new obj
-  return filterObjContainer;
-}
-
-// custom type for Header Data
-type HeaderData = string | number;
-
 /* TYPE HANDLING*/
 interface FreezableTableProps {
   data: object[];
   defaultWidth: number;
   width: number[];
-  headers: HeaderData[];
+  headers: string[];
 
   freezeColNum?: number;
   freezeHeaderNum?: number;
@@ -224,36 +201,16 @@ export default function FreezableTable({
   // headers render source tracking
   let headersSource;
 
-  //  if there is an item in headers array, use headers array as source
-  if (headers.length > 0) headersSource = headers;
-  // otherwise, use data items keys
-  else headersSource = Object.keys(data[0]);
-
-  // push headers source content in Row DataFrame
-  headerRowDataFrame.push([
-    ...headersSource.map((dt: any) => {
-      const finalDt = typeof dt !== 'string' ? dt.toString() : dt;
-      return capHeader
-        ? upperHeader
-          ? capitalizeWords(finalDt).toUpperCase()
-          : capitalizeWords(finalDt)
-        : upperHeader
-        ? finalDt.toUpperCase()
-        : finalDt;
-    }),
-  ]);
-
-  // accumulate header rendering based on freezeHeaderNum
-  if (freezeHeaderNum && headerRowDataFrame.length < data.length) {
+  // adjust header rendering based on freezeHeaderNum
+  if (freezeHeaderNum && headerRowDataFrame.length <= data.length - 1) {
     for (let i = 0; i < freezeHeaderNum - 1; i++) {
       const extraHeaderData: string[] = Object.values(
-        sliceDataObj(data[headerRowDataFrame.length - 1], headers.length)
+        data[headerRowDataFrame.length - 1]
       );
 
       headerRowDataFrame.push([...extraHeaderData]);
     }
   }
-
   // header row component
   const HeaderRow = ({
     hidden,
@@ -337,7 +294,6 @@ export default function FreezableTable({
     rowOrder: number;
     hidden?: boolean;
   }) => {
-    // ! MANIPULATE ROW DATA HERE
     // generate data row cells content based on data
     const dataRowContainer: string[] = [];
     Object.keys(dataItem).forEach((key: string) => {
@@ -371,7 +327,7 @@ export default function FreezableTable({
 
     return (
       <View style={{ flexDirection: 'row' }}>
-        {dataRowContainer.map((cellData: string, idx: number) => (
+        {dataRowContainer.map((data: string, idx: number) => (
           <Text
             style={[
               (freezeColNum ? idx < freezeColNum : idx < 1)
@@ -384,7 +340,7 @@ export default function FreezableTable({
             ]}
             key={`data-row-${rowOrder}-cell-${idx}`}
           >
-            {cellData}
+            {data}
           </Text>
         ))}
       </View>
@@ -429,7 +385,7 @@ export default function FreezableTable({
     return (
       <View style={[styles.mainContainer, mainContainerStyles]}>
         {/* beneath table to display freeze column */}
-        <View style={styles.freezeColTable}>
+        <View style={[styles.freezeColTable]}>
           {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
             <HeaderRow
               key={`freeze-row-${idx}-hidden`}
@@ -469,7 +425,7 @@ export default function FreezableTable({
                     key={`data-row-${
                       freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
                     }-hidden`}
-                    dataItem={sliceDataObj(item, headers.length)}
+                    dataItem={item}
                     rowOrder={
                       freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
                     }
@@ -534,7 +490,7 @@ export default function FreezableTable({
                     key={`data-row-${
                       freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
                     }-scrollable`}
-                    dataItem={sliceDataObj(item, headers.length)}
+                    dataItem={item}
                     rowOrder={
                       freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
                     }
@@ -602,7 +558,7 @@ export default function FreezableTable({
                       key={`data-row-${
                         freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
                       }-hidden`}
-                      dataItem={sliceDataObj(item, headers.length)}
+                      dataItem={item}
                       rowOrder={
                         freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
                       }
@@ -667,7 +623,7 @@ export default function FreezableTable({
                       key={`data-row-${
                         freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
                       }-scrollable`}
-                      dataItem={sliceDataObj(item, headers.length)}
+                      dataItem={item}
                       rowOrder={
                         freezeHeaderNum ? idx + (freezeHeaderNum - 1) : idx
                       }
