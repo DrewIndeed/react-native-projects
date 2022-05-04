@@ -4,17 +4,19 @@ import FreezableTable from './FreezableTable';
 
 /**
  interface FreezableTableProps {
-  data: object[];           REQUIRED, array of objects with consistent number of keys
-  width: number[];            REQUIRED, length = data keys number + 1
-  freezeColNum?: number;      OPTIONAL, desc: number of freeze column from left to right, default = 1
-  freezeHeaderNum?: number;   OPTIONAL, desc: number of freeze header from top to bottom, default = 1
+  data: object[];               REQUIRED, array of objects with consistent number of keys
+  defaultWidth: number;         REQUIRED, fallback width if column width is not defined
+  columns: Column[];            REQUIRED, array of objects 
+
+  freezeColNum?: number;        OPTIONAL, desc: number of freeze column from left to right, default = 0
+  freezeHeaderNum?: number;     OPTIONAL, desc: number of freeze header from top to bottom, default = 0
 
   mainContainerStyles?: object;
   freezeRowStyles?: object;
   freezeColStyles?: object;
   bodyStyles?: object;
   
-  capHeader? boolean;         OPTIONAL, if capHeader AND upperHeader are set, header will be UPPERCASE
+  capHeader? boolean;           OPTIONAL, if capHeader AND upperHeader are set, header will be UPPERCASE
   upperHeader? boolean;
   innerBorderWidth?: number;
 }
@@ -47,6 +49,7 @@ export default function App() {
             header: 'Col 5',
           },
         ]}
+        
         // freezeColNum={1}
         // freezeRowNum={0}
 

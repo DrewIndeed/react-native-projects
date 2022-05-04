@@ -45,7 +45,7 @@ function sliceDataObj(targetObj: object, limit: number) {
 /* TYPE HANDLING*/
 type Column = {
   width?: number;
-  header?: string;
+  header?: string | number;
 };
 interface FreezableTableProps {
   data: object[];
@@ -80,10 +80,16 @@ export default function FreezableTable({
   upperHeader,
   innerBorderWidth,
 }: FreezableTableProps) {
-  // ERROR HANDLING
+  // ERROR HANDLING: required props
   if (!data || data.length === 0)
     throw new Error('[FreezableTable Error]: There is no data to render');
 
+  if (defaultWidth < 0)
+    throw new Error(
+      '[FreezableTable Error]: defaultWidth must be greater than 0'
+    );
+
+  // ERROR HANDLING: freeze row and col number props
   if (
     freezeColNum &&
     (freezeColNum > Object.keys(data[0]).length + 1 || freezeColNum < 0)
@@ -97,6 +103,8 @@ export default function FreezableTable({
       '[FreezableTable Error]: Value must be greater or equal to 0 and less than data row number for freezeRowNum, otherwise leave blank with default value as 0'
     );
 
+  // ERROR HANDLING: styles containers
+  // --- main container ---
   if (mainContainerStyles && Object.keys(mainContainerStyles).length > 0) {
     // supported styles array for mainContainerStyles
     const SUPPORTED_STYLES: string[] = [
@@ -148,7 +156,7 @@ export default function FreezableTable({
       }
     }
   }
-
+  // --- cells container ---
   const validateCellStyles = (styleObj: object) => {
     // supported styles array for mainContainerStyles
     const SUPPORTED_STYLES: string[] = [
@@ -183,7 +191,6 @@ export default function FreezableTable({
         } only supports styles relating to: ${SUPPORTED_STYLES.join(', ')}`
       );
   };
-
   if (firstRowStyles && Object.keys(firstRowStyles).length > 0)
     validateCellStyles(firstRowStyles);
   if (firstColStyles && Object.keys(firstColStyles).length > 0)
@@ -213,7 +220,13 @@ export default function FreezableTable({
   const headers =
     columns.length > 0
       ? columns.reduce((container: string[], item: Column, idx: number) => {
-          container.push(item.header ? item.header : Object.keys(data[0])[idx]);
+          container.push(
+            item.header
+              ? typeof item.header !== 'string'
+                ? item.header.toString()
+                : item.header
+              : Object.keys(data[0])[idx]
+          );
           return container;
         }, [])
       : Object.keys(data[0]);
