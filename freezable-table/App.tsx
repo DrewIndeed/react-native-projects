@@ -25,9 +25,9 @@ export default function App() {
       <FreezableTable
         data={testData}
         width={[150, 175, 275, 300, 175]}
-        headers={['col 1', 'col 2', 'col 3', 'col 4', 'col 5']}
-        freezeColNum={1}
-        freezeHeaderNum={2}
+        headers={['col 1', 'col 2', 'col 3', 'col 4']}
+        // freezeColNum={1}
+        // freezeHeaderNum={2}
         mainContainerStyles={{
           marginVertical: 40,
           borderWidth: 1,
