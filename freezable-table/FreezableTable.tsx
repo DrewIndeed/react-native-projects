@@ -26,6 +26,7 @@ export default function FreezableTable(props: FreezableTableProps) {
     freezeColNum,
     freezeRowNum,
     mainContainerStyles,
+    firstRowStyles,
     firstColStyles,
     bodyStyles,
     capHeader,
@@ -146,8 +147,9 @@ export default function FreezableTable(props: FreezableTableProps) {
         ? headerCellsStyles.firstCell.style
         : headerCellsStyles.otherCells.style,
       { width: widths[idx] || defaultWidth },
-      rowOrder >= 0 && idx === 0 && firstColStyles,
-      rowOrder >= 0 && idx > 0 && bodyStyles,
+      rowOrder === 0 && firstRowStyles,
+      rowOrder > 0 && idx === 0 && firstColStyles,
+      rowOrder > 0 && idx > 0 && bodyStyles,
     ];
 
     return (

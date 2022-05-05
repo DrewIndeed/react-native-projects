@@ -30,13 +30,16 @@ export default function App() {
             <Text style={{ textAlign: 'center' }}>{value}</Text>
           </View>
         )}
-        // freezeColNum={1}
+        freezeColNum={1}
         // freezeRowNum={2}
 
         mainContainerStyles={{
           marginVertical: 48,
           borderWidth: 1,
           flex: 1,
+        }}
+        firstRowStyles={{
+          backgroundColor: 'lime',
         }}
         firstColStyles={{
           backgroundColor: 'lightpink',

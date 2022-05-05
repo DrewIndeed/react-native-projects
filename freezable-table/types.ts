@@ -14,6 +14,7 @@ export interface FreezableTableProps {
   freezeRowNum?: number;
 
   mainContainerStyles?: object;
+  firstRowStyles?: object
   firstColStyles?: object;
   bodyStyles?: object;
 
