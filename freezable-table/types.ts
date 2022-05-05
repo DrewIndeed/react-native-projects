@@ -9,12 +9,11 @@ export interface FreezableTableProps {
   defaultWidth: number;
   columns: Column[];
 
-  cellRenderer?: (key: any, value: any, row: any) => string;
+  cellRenderer?: (key: any, value: any, row: any) => any;
   freezeColNum?: number;
   freezeRowNum?: number;
 
   mainContainerStyles?: object;
-  firstRowStyles?: object;
   firstColStyles?: object;
   bodyStyles?: object;
 

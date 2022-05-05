@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, Children } from 'react';
 import {
   Animated,
   Text,
@@ -26,7 +26,6 @@ export default function FreezableTable(props: FreezableTableProps) {
     freezeColNum,
     freezeRowNum,
     mainContainerStyles,
-    firstRowStyles,
     firstColStyles,
     bodyStyles,
     capHeader,
@@ -115,14 +114,13 @@ export default function FreezableTable(props: FreezableTableProps) {
     headerRowData: string[];
     rowOrder: number;
   }) => {
-    // FreezableTableMainSheet container for first and following cells
+    // ! compulsory style containers for first and following cells
     let commonCellsStyles: StyleProp<TextStyle> = {
       borderWidth: innerBorderWidth || 1,
       textAlign: 'center',
       backgroundColor: '#fff',
       padding: 10,
     };
-
     const headerCellsStyles: {
       otherCells: { style: StyleProp<TextStyle> };
       firstCell: { style: StyleProp<TextStyle> };
@@ -137,10 +135,20 @@ export default function FreezableTable(props: FreezableTableProps) {
           ...commonCellsStyles,
           // ! Toggle display of first cell of header / freeze column here
           opacity: 1,
-          display: hidden ? 'flex' : 'none',
+          display: 'flex',
         },
       },
     };
+
+    // ! generate must-have style array for header cell
+    const compulsoryStyles = (rowOrder: number, idx: number) => [
+      (freezeColNum ? idx < freezeColNum : idx < 1)
+        ? headerCellsStyles.firstCell.style
+        : headerCellsStyles.otherCells.style,
+      { width: widths[idx] || defaultWidth },
+      rowOrder >= 0 && idx === 0 && firstColStyles,
+      rowOrder >= 0 && idx > 0 && bodyStyles,
+    ];
 
     return (
       <Animated.View
@@ -160,16 +168,11 @@ export default function FreezableTable(props: FreezableTableProps) {
       >
         {headerRowData.map((content: string, idx: number) => (
           <Text
-            style={[
-              (freezeColNum ? idx < freezeColNum : idx < 1)
-                ? headerCellsStyles.firstCell.style
-                : headerCellsStyles.otherCells.style,
-              { width: widths[idx] || defaultWidth },
-              rowOrder === 0 && firstRowStyles,
-              rowOrder > 0 && idx === 0 && firstColStyles,
-              rowOrder > 0 && idx > 0 && bodyStyles,
-            ]}
+            style={compulsoryStyles(rowOrder, idx)}
             key={`freeze-row-${rowOrder}-cell-${idx}`}
+            onPress={() =>
+              alert(`(header_row, header_col) : (${rowOrder}, ${idx})`)
+            }
           >
             {content}
           </Text>
@@ -188,20 +191,9 @@ export default function FreezableTable(props: FreezableTableProps) {
     rowOrder: number;
     hidden?: boolean;
   }) => {
-    // generate data row cells content based on data
-    const dataRowContainer: string[] = [];
-    columnKeys.forEach((key: string) => {
-      if (cellRenderer) {
-        dataRowContainer.push(cellRenderer(key, dataItem[key], dataItem));
-      } else {
-        dataRowContainer.push('Empty');
-      }
-    });
-
-    // FreezableTableMainSheet container for first and following cells
+    // ! compulsory style containers for first and following cells
     const commonCellsStyles: StyleProp<TextStyle> = {
       borderWidth: innerBorderWidth || 1,
-      textAlign: 'center',
       backgroundColor: '#fff',
       padding: 10,
     };
@@ -212,7 +204,7 @@ export default function FreezableTable(props: FreezableTableProps) {
       firstCell: {
         style: {
           ...commonCellsStyles,
-          display: hidden ? 'flex' : 'none',
+          display: 'flex',
         },
       },
       otherCells: {
@@ -223,24 +215,58 @@ export default function FreezableTable(props: FreezableTableProps) {
       },
     };
 
+    // ! generate must-have style array for data cell
+    const compulsoryStyles = (rowOrder: number, idx: number) => [
+      (freezeColNum ? idx < freezeColNum : idx < 1)
+        ? dataRowStyles.firstCell.style
+        : dataRowStyles.otherCells.style,
+      { width: widths[idx] || defaultWidth },
+      rowOrder >= 0 && idx === 0 && firstColStyles,
+      rowOrder >= 0 && idx > 0 && bodyStyles,
+    ];
+
+    // ! return header row component
     return (
       <View style={{ flexDirection: 'row' }}>
-        {dataRowContainer.map((data: string, idx: number) => (
-          <Text
-            style={[
-              (freezeColNum ? idx < freezeColNum : idx < 1)
-                ? dataRowStyles.firstCell.style
-                : dataRowStyles.otherCells.style,
-              { width: widths[idx] || defaultWidth },
-              rowOrder === 0 && firstRowStyles,
-              rowOrder >= 0 && idx === 0 && firstColStyles,
-              rowOrder >= 0 && idx > 0 && bodyStyles,
-            ]}
-            key={`data-row-${rowOrder}-cell-${idx}`}
-          >
-            {data}
-          </Text>
-        ))}
+        {columnKeys.map((key: string, idx: number) => {
+          // ** if cellRenderer is specified, render based in cellRenderer value
+          if (cellRenderer) {
+            const cellValue = cellRenderer(key, dataItem[key], dataItem);
+
+            // ** if cellRenderer return value has typeof string
+            if (typeof cellValue === 'string') {
+              return (
+                <View
+                  style={compulsoryStyles(rowOrder, idx)}
+                  key={`data-row-${rowOrder}-cell-${idx}`}
+                >
+                  <Text>{cellValue}</Text>
+                </View>
+              );
+            }
+
+            // ** otherwise, clone the component and handle its props
+            return React.cloneElement(cellValue, {
+              ...cellValue.props,
+              style: [
+                ...compulsoryStyles(rowOrder, idx),
+                cellValue.props.style,
+              ],
+              key: `data-row-${rowOrder}-cell-${idx}`,
+              // onTouchEnd: () => alert(`(row, col) : (${rowOrder}, ${idx})`),
+            });
+          }
+
+          // ** otherwise, return string 'Empty'
+          return (
+            <View
+              style={compulsoryStyles(rowOrder, idx)}
+              key={`data-row-${rowOrder}-cell-${idx}`}
+            >
+              <Text>{dataItem[key]}</Text>
+            </View>
+          );
+        })}
       </View>
     );
   };
@@ -373,32 +399,26 @@ export default function FreezableTable(props: FreezableTableProps) {
   const caseResult = determineCase(freezeRowNum, freezeColNum);
 
   // ! return case render content
-  if (caseResult.type === 'regular') {
-    return (
-      <View
-        style={[FreezableTableMainSheet.mainContainer, mainContainerStyles]}
-      >
-        <FreezableCore />
-      </View>
-    );
-  } else {
-    return (
+  return caseResult.type === 'regular' ? (
+    <View style={[FreezableTableMainSheet.mainContainer, mainContainerStyles]}>
+      <FreezableCore />
+    </View>
+  ) : (
+    <ScrollView
+      style={[FreezableTableMainSheet.mainContainer, mainContainerStyles]}
+      bounces={false}
+      horizontal={caseResult.scrolling[0]}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+    >
       <ScrollView
-        style={[FreezableTableMainSheet.mainContainer, mainContainerStyles]}
         bounces={false}
-        horizontal={caseResult.scrolling[0]}
+        horizontal={caseResult.scrolling[1]}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          bounces={false}
-          horizontal={caseResult.scrolling[1]}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-        >
-          <FreezableCore />
-        </ScrollView>
+        <FreezableCore />
       </ScrollView>
-    );
-  }
+    </ScrollView>
+  );
 }
