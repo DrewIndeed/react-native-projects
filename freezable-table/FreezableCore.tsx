@@ -2,6 +2,7 @@ import React from 'react';
 import { Animated, View, ScrollView } from 'react-native';
 import { sliceDataObj } from './utils';
 import { FreezableTableMainSheet } from './stylesheets';
+import PickContainer from './PickContainer';
 
 const FreezableCore = ({
   HeaderRow,
@@ -16,7 +17,19 @@ const FreezableCore = ({
   columnKeys,
   defaultWidth,
   accWidth,
+  mainContainerStyles,
+  caseResult,
 }: any) => {
+  const headerRowComponentsArr = (keyType: string, hidden: boolean) =>
+    headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
+      <HeaderRow
+        key={`freeze-row-${idx}-${keyType}`}
+        headerRowData={headerRowArr}
+        rowOrder={idx}
+        hidden={hidden}
+      />
+    ));
+
   const dataRowComponentsArr = (keyType: string, hidden: boolean) =>
     data
       .slice(freezeRowNum ? freezeRowNum - 1 : 0)
@@ -25,6 +38,7 @@ const FreezableCore = ({
           key={`data-row-${
             freezeRowNum ? idx + (freezeRowNum - 1) : idx
           }-${keyType}`}
+          columnKeys={columnKeys}
           dataItem={sliceDataObj(item, columnKeys)}
           rowOrder={freezeRowNum ? idx + (freezeRowNum - 1) : idx}
           hidden={hidden}
@@ -32,17 +46,13 @@ const FreezableCore = ({
       ));
 
   return (
-    <>
+    <PickContainer
+      caseResult={caseResult}
+      styleArray={[FreezableTableMainSheet.mainContainer, mainContainerStyles]}
+    >
       {/* beneath table to display freeze column */}
       <View style={[FreezableTableMainSheet.freezeColTable]}>
-        {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
-          <HeaderRow
-            key={`freeze-row-${idx}-hidden`}
-            headerRowData={headerRowArr}
-            rowOrder={idx}
-            hidden
-          />
-        ))}
+        {headerRowComponentsArr('hidden', true)}
 
         <ScrollView
           bounces={false}
@@ -85,14 +95,7 @@ const FreezableCore = ({
           },
         ]}
       >
-        {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
-          <HeaderRow
-            key={`freeze-row-${idx}-scrollable`}
-            headerRowData={headerRowArr}
-            rowOrder={idx}
-            hidden={false}
-          />
-        ))}
+        {headerRowComponentsArr('scrollable', false)}
 
         <ScrollView
           ref={scrollViewRef}
@@ -142,7 +145,7 @@ const FreezableCore = ({
           </ScrollView>
         </ScrollView>
       </View>
-    </>
+    </PickContainer>
   );
 };
 

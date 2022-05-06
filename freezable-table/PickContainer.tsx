@@ -2,9 +2,9 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 
 // ! component to pick container for FreezableCore Component
-const PickContainer = ({ caseResult, styleArray, renderCore }: any) => {
+const PickContainer = ({ caseResult, styleArray, children }: any) => {
   return caseResult.type === 'regular' ? (
-    <View style={styleArray}>{renderCore('core-in-regular')}</View>
+    <View style={styleArray}>{children}</View>
   ) : (
     <ScrollView
       style={styleArray}
@@ -19,7 +19,7 @@ const PickContainer = ({ caseResult, styleArray, renderCore }: any) => {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
       >
-        {renderCore('core-in-special')}
+        {children}
       </ScrollView>
     </ScrollView>
   );

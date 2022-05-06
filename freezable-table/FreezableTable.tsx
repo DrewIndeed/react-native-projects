@@ -10,7 +10,6 @@ import {
 import { Column, FreezableTableProps } from './types';
 import { FreezableTableMainSheet } from './stylesheets';
 import FreezableCore from './FreezableCore';
-import PickContainer from './PickContainer';
 
 export default function FreezableTable(props: FreezableTableProps) {
   // ! destructure Props object
@@ -152,10 +151,12 @@ export default function FreezableTable(props: FreezableTableProps) {
 
   // ! data row component
   const DataRow = ({
+    columnKeys,
     dataItem,
     rowOrder,
     hidden,
   }: {
+    columnKeys: string[];
     dataItem: { [key: string]: any };
     rowOrder: number;
     hidden?: boolean;
@@ -223,26 +224,21 @@ export default function FreezableTable(props: FreezableTableProps) {
 
   // ! FreezableCore Component with properly chosen parent
   return (
-    <PickContainer
+    <FreezableCore
+      HeaderRow={HeaderRow}
+      DataRow={DataRow}
+      freezeColOffsetY={freezeColOffsetY}
+      headerOffsetX={headerOffsetX}
+      freezeRowNum={freezeRowNum}
+      freezeColNum={freezeColNum}
+      scrollViewRef={scrollViewRef}
+      data={data}
+      headerRowDataFrame={headerRowDataFrame}
+      columnKeys={columnKeys}
+      defaultWidth={defaultWidth}
+      accWidth={accWidth}
+      mainContainerStyles={mainContainerStyles}
       caseResult={caseResult}
-      styleArray={[FreezableTableMainSheet.mainContainer, mainContainerStyles]}
-      renderCore={(customKey: string) => (
-        <FreezableCore
-          key={customKey}
-          HeaderRow={HeaderRow}
-          DataRow={DataRow}
-          freezeColOffsetY={freezeColOffsetY}
-          headerOffsetX={headerOffsetX}
-          freezeRowNum={freezeRowNum}
-          freezeColNum={freezeColNum}
-          scrollViewRef={scrollViewRef}
-          data={data}
-          headerRowDataFrame={headerRowDataFrame}
-          columnKeys={columnKeys}
-          defaultWidth={defaultWidth}
-          accWidth={accWidth}
-        />
-      )}
     />
   );
 }
