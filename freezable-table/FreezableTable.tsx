@@ -1,12 +1,5 @@
-import React, { useRef, Children } from 'react';
-import {
-  Animated,
-  Text,
-  View,
-  ScrollView,
-  StyleProp,
-  TextStyle,
-} from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Animated, Text, View, ScrollView } from 'react-native';
 import {
   capitalizeWords,
   sliceDataObj,
@@ -37,10 +30,6 @@ export default function FreezableTable(props: FreezableTableProps) {
   // ! error handling
   allErrorHandling(props);
 
-  // ! anim values tracking refs
-  const headerOffsetX = useRef(new Animated.Value(0)).current;
-  const freezeColOffsetY = useRef(new Animated.Value(0)).current;
-
   // ! extract all keys from columns
   const columnKeys: string[] = [];
   columns.map((col) => columnKeys.push(col.key));
@@ -61,6 +50,11 @@ export default function FreezableTable(props: FreezableTableProps) {
     for (let i = 0; i < (freezeColNum ? freezeColNum : 1); i++)
       accWidth += widths[i];
   }
+
+  // ! anim values tracking refs
+  const headerOffsetX = useRef(new Animated.Value(0)).current;
+  const freezeColOffsetY = useRef(new Animated.Value(0)).current;
+  const scrollViewRef1 = useRef<ScrollView>(null);
 
   // ! header rows(s)
   // ** extract header row content
@@ -116,27 +110,24 @@ export default function FreezableTable(props: FreezableTableProps) {
     rowOrder: number;
   }) => {
     // ! compulsory style containers for first and following cells
-    let commonCellsStyles: StyleProp<TextStyle> = {
+    let commonCellsStyles: any = {
       borderWidth: innerBorderWidth || 1,
       textAlign: 'center',
       backgroundColor: '#fff',
       padding: 10,
     };
-    const headerCellsStyles: {
-      otherCells: { style: StyleProp<TextStyle> };
-      firstCell: { style: StyleProp<TextStyle> };
-    } = {
+    const headerCellsStyles: any = {
       otherCells: {
         style: {
           ...commonCellsStyles,
+          opacity: hidden ? 0 : 1,
         },
       },
       firstCell: {
         style: {
           ...commonCellsStyles,
           // ! Toggle display of first cell of header / freeze column here
-          opacity: 1,
-          display: 'flex',
+          opacity: hidden ? 1 : 0,
         },
       },
     };
@@ -194,19 +185,17 @@ export default function FreezableTable(props: FreezableTableProps) {
     hidden?: boolean;
   }) => {
     // ! compulsory style containers for first and following cells
-    const commonCellsStyles: StyleProp<TextStyle> = {
+    const commonCellsStyles: any = {
       borderWidth: innerBorderWidth || 1,
       backgroundColor: '#fff',
       padding: 10,
     };
-    const dataRowStyles: {
-      firstCell: { style: StyleProp<TextStyle> };
-      otherCells: { style: StyleProp<TextStyle> };
-    } = {
+    const dataRowStyles: any = {
       firstCell: {
         style: {
           ...commonCellsStyles,
           display: 'flex',
+          opacity: hidden ? 1 : 0,
         },
       },
       otherCells: {
@@ -255,7 +244,6 @@ export default function FreezableTable(props: FreezableTableProps) {
                 cellValue.props.style,
               ],
               key: `data-row-${rowOrder}-cell-${idx}`,
-              // onTouchEnd: () => alert(`(row, col) : (${rowOrder}, ${idx})`),
             });
           }
 
@@ -345,24 +333,33 @@ export default function FreezableTable(props: FreezableTableProps) {
         ))}
 
         <ScrollView
+          ref={scrollViewRef1}
+          onContentSizeChange={() =>
+            scrollViewRef1.current?.scrollTo({
+              x: defaultWidth,
+              y: 0,
+              animated: false,
+            })
+          }
+          decelerationRate={0.45}
+          onScroll={(event) => {
+            const curX = event.nativeEvent.contentOffset.x;
+            if (curX - accWidth <= 0) {
+              scrollViewRef1.current?.scrollTo({
+                x: accWidth,
+                y: 0,
+                animated: false,
+              });
+            }
+            headerOffsetX.setValue(curX);
+          }}
           bounces={false}
           scrollEventThrottle={16}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    x: headerOffsetX,
-                  },
-                },
-              },
-            ],
-            { useNativeDriver: false }
-          )}
         >
           <ScrollView
+            decelerationRate={0.45}
             bounces={false}
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}

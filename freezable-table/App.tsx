@@ -12,17 +12,22 @@ export default function App() {
           {
             width: 150,
             header: 'Col 1',
-            key: 'country',
+            key: 'address',
           },
           {
-            width: 175,
+            width: 130,
             header: 'Col 2',
             key: 'phone',
           },
           {
             width: 175,
             header: 'Col 3',
-            key: 'address',
+            key: 'name',
+          },
+          {
+            width: 175,
+            header: 'Col 4',
+            key: 'country',
           },
         ]}
         cellRenderer={(key, value, row) => (
@@ -30,7 +35,7 @@ export default function App() {
             <Text style={{ textAlign: 'center' }}>{value}</Text>
           </View>
         )}
-        freezeColNum={1}
+        freezeColNum={2}
         // freezeRowNum={2}
 
         mainContainerStyles={{
@@ -39,13 +44,13 @@ export default function App() {
           flex: 1,
         }}
         firstRowStyles={{
-          backgroundColor: 'lime',
+          backgroundColor: 'tomato',
         }}
         firstColStyles={{
-          backgroundColor: 'lightpink',
+          backgroundColor: 'skyblue',
         }}
         bodyStyles={{
-          backgroundColor: 'lightyellow',
+          backgroundColor: 'lightgreen',
         }}
 
         // capHeader={true}
