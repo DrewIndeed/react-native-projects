@@ -21,6 +21,54 @@ export function sliceDataObj(targetObj: object, columnKeys: string[]) {
   return filterObjContainer;
 }
 
+// generate compulsory style based on conditioms
+export const generateCompulsoryStyles = (
+  innerBorderWidth: any,
+  hidden: any,
+  freezeColNum: any,
+  widths: any,
+  defaultWidth: any,
+  firstRowStyles: any,
+  firstColStyles: any,
+  bodyStyles: any,
+  isDataRow: any
+) => {
+  // ! compulsory style containers for first and following cells
+  let commonCellsStyles: any = {
+    borderWidth: innerBorderWidth || 1,
+    backgroundColor: '#fff',
+    padding: 10,
+  };
+  const headerCellsStyles: any = {
+    otherCells: {
+      style: {
+        ...commonCellsStyles,
+        opacity: hidden ? 0 : 1,
+      },
+    },
+    firstCell: {
+      style: {
+        ...commonCellsStyles,
+        opacity: hidden ? 1 : 0,
+      },
+    },
+  };
+
+  // ! generate must-have style array for cells
+  return (rowOrder: number, idx: number) => [
+    (freezeColNum ? idx < freezeColNum : idx < 1)
+      ? headerCellsStyles.firstCell.style
+      : headerCellsStyles.otherCells.style,
+    { width: widths[idx] || defaultWidth },
+    !isDataRow && rowOrder === 0 && firstRowStyles,
+    !isDataRow && rowOrder > 0 && idx === 0 && firstColStyles,
+    !isDataRow && rowOrder > 0 && idx > 0 && bodyStyles,
+
+    isDataRow && rowOrder >= 0 && idx === 0 && firstColStyles,
+    isDataRow && rowOrder >= 0 && idx > 0 && bodyStyles,
+  ];
+};
+
 // error handling for freezable table component
 export function allErrorHandling({
   data,

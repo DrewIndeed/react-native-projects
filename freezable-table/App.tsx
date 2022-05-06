@@ -35,8 +35,8 @@ export default function App() {
             <Text style={{ textAlign: 'center' }}>{value}</Text>
           </View>
         )}
-        freezeColNum={2}
-        freezeRowNum={2}
+        // freezeColNum={1}
+        freezeRowNum={5}
         mainContainerStyles={{
           marginVertical: 48,
           borderWidth: 1,
