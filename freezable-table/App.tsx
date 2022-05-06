@@ -10,12 +10,12 @@ export default function App() {
         defaultWidth={150}
         columns={[
           {
-            width: 150,
+            width: 120,
             header: 'Col 1',
             key: 'address',
           },
           {
-            width: 130,
+            width: 120,
             header: 'Col 2',
             key: 'phone',
           },
@@ -36,8 +36,7 @@ export default function App() {
           </View>
         )}
         freezeColNum={2}
-        // freezeRowNum={2}
-
+        freezeRowNum={2}
         mainContainerStyles={{
           marginVertical: 48,
           borderWidth: 1,
@@ -47,7 +46,7 @@ export default function App() {
           backgroundColor: 'tomato',
         }}
         firstColStyles={{
-          backgroundColor: 'skyblue',
+          backgroundColor: 'yellow',
         }}
         bodyStyles={{
           backgroundColor: 'lightgreen',

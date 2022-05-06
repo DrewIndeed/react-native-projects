@@ -320,7 +320,12 @@ export default function FreezableTable(props: FreezableTableProps) {
       <View
         style={[
           FreezableTableMainSheet.scrollableTable,
-          { marginLeft: accWidth },
+          {
+            marginLeft:
+              !freezeColNum || (freezeColNum && freezeColNum === 0)
+                ? 0
+                : accWidth,
+          },
         ]}
       >
         {headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
