@@ -2,7 +2,7 @@ import React from 'react';
 import { Animated, View, ScrollView } from 'react-native';
 import { sliceDataObj } from './utils';
 import { FreezableTableMainSheet } from './stylesheets';
-import PickContainer from './PickContainer';
+import CoreWrapper from './CoreWrapper';
 
 const FreezableCore = ({
   HeaderRow,
@@ -46,7 +46,7 @@ const FreezableCore = ({
       ));
 
   return (
-    <PickContainer
+    <CoreWrapper
       caseResult={caseResult}
       styleArray={[FreezableTableMainSheet.mainContainer, mainContainerStyles]}
     >
@@ -145,7 +145,7 @@ const FreezableCore = ({
           </ScrollView>
         </ScrollView>
       </View>
-    </PickContainer>
+    </CoreWrapper>
   );
 };
 

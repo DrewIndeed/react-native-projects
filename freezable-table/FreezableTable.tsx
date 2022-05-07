@@ -10,6 +10,7 @@ import {
 import { Column, FreezableTableProps } from './types';
 import { FreezableTableMainSheet } from './stylesheets';
 import FreezableCore from './FreezableCore';
+import Cell from './Cell';
 
 export default function FreezableTable(props: FreezableTableProps) {
   // ! destructure Props object
@@ -104,6 +105,7 @@ export default function FreezableTable(props: FreezableTableProps) {
   // ! header row component
   const HeaderRow = ({
     headerRowData,
+
     rowOrder,
     hidden,
   }: {
@@ -128,22 +130,21 @@ export default function FreezableTable(props: FreezableTableProps) {
         ]}
       >
         {headerRowData.map((content: string, idx: number) => (
-          <View
-            style={generateCompulsoryStyles(
-              innerBorderWidth,
-              hidden,
-              freezeColNum,
-              widths,
-              defaultWidth,
-              firstRowStyles,
-              firstColStyles,
-              bodyStyles,
-              false
-            )(rowOrder, idx)}
-            key={`freeze-row-${rowOrder}-cell-${idx}`}
-          >
-            <Text>{content}</Text>
-          </View>
+          <Cell
+            key={`header-row-${rowOrder}-cell-${idx}`}
+            innerBorderWidth={innerBorderWidth}
+            hidden={hidden}
+            freezeColNum={freezeColNum}
+            widths={widths}
+            defaultWidth={defaultWidth}
+            firstRowStyles={firstRowStyles}
+            firstColStyles={firstColStyles}
+            bodyStyles={bodyStyles}
+            cellType="header"
+            rowOrder={rowOrder}
+            idx={idx}
+            content={content}
+          />
         ))}
       </Animated.View>
     );
@@ -153,6 +154,7 @@ export default function FreezableTable(props: FreezableTableProps) {
   const DataRow = ({
     columnKeys,
     dataItem,
+
     rowOrder,
     hidden,
   }: {
@@ -177,42 +179,40 @@ export default function FreezableTable(props: FreezableTableProps) {
             true
           )(rowOrder, idx);
 
-          // ** if cellRenderer is specified, render based in cellRenderer value
+          // ** if cellRenderer is specified and cellRenderer returns a Component
+          let cellValue = null;
           if (cellRenderer) {
-            // get return value from cellRenderer
-            const cellValue = cellRenderer(key, dataItem[key], dataItem);
+            // ** get return value from cellRenderer
+            cellValue = cellRenderer(key, dataItem[key], dataItem);
 
-            // ** if cellRenderer return value is not a Component
-            if (
-              typeof cellValue === 'function' &&
-              !!cellValue.prototype.isReactComponent
-            ) {
-              return (
-                <View
-                  style={compulsoryStyleArr}
-                  key={`data-row-${rowOrder}-cell-${idx}`}
-                >
-                  <Text>{cellValue}</Text>
-                </View>
-              );
+            // ** check for Component
+            if (cellValue['$$typeof']) {
+              return React.cloneElement(cellValue, {
+                ...cellValue.props,
+                style: [...compulsoryStyleArr, cellValue.props.style],
+                key: `data-row-${rowOrder}-cell-${idx}`,
+              });
             }
-
-            // ** otherwise, clone the component and handle its props
-            return React.cloneElement(cellValue, {
-              ...cellValue.props,
-              style: [...compulsoryStyleArr, cellValue.props.style],
-              key: `data-row-${rowOrder}-cell-${idx}`,
-            });
           }
 
-          // ** otherwise, return default data from data source
+          // ** if cellRenderer is not null, render based on cellRenderer value, 
+          // ** otherwise, data from source
           return (
-            <View
-              style={compulsoryStyleArr}
+            <Cell
               key={`data-row-${rowOrder}-cell-${idx}`}
-            >
-              <Text>{dataItem[key]}</Text>
-            </View>
+              innerBorderWidth={innerBorderWidth}
+              hidden={hidden}
+              freezeColNum={freezeColNum}
+              widths={widths}
+              defaultWidth={defaultWidth}
+              firstRowStyles={firstRowStyles}
+              firstColStyles={firstColStyles}
+              bodyStyles={bodyStyles}
+              cellType="data"
+              rowOrder={rowOrder}
+              idx={idx}
+              content={cellValue ? cellValue : dataItem[key]}
+            />
           );
         })}
       </View>

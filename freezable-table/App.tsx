@@ -30,13 +30,14 @@ export default function App() {
             key: 'country',
           },
         ]}
-        cellRenderer={(key, value, row) => (
-          <View style={{ borderColor: '#000' }}>
-            <Text style={{ textAlign: 'center' }}>{value}</Text>
-          </View>
-        )}
-        // freezeColNum={1}
-        freezeRowNum={5}
+        cellRenderer={(key, value, row) =>
+          // <View style={{ borderColor: 'red' }}>
+          //   <Text style={{ textAlign: 'center' }}>{value}</Text>
+          // </View>
+          value
+        }
+        freezeColNum={1}
+        freezeRowNum={2}
         mainContainerStyles={{
           marginVertical: 48,
           borderWidth: 1,

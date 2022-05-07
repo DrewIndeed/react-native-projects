@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 
 // ! component to pick container for FreezableCore Component
-const PickContainer = ({ caseResult, styleArray, children }: any) => {
+const CoreWrapper = ({ caseResult, styleArray, children }: any) => {
   return caseResult.type === 'regular' ? (
     <View style={styleArray}>{children}</View>
   ) : (
@@ -25,4 +25,4 @@ const PickContainer = ({ caseResult, styleArray, children }: any) => {
   );
 };
 
-export default PickContainer;
+export default CoreWrapper;
