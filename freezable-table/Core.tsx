@@ -3,45 +3,55 @@ import { Animated, View, ScrollView } from 'react-native';
 import { sliceDataObj } from './utils';
 import { FreezableTableMainSheet } from './stylesheets';
 import CoreWrapper from './CoreWrapper';
+import RowWrapper from './RowWrapper';
+import Row from './Row';
 
-const FreezableCore = ({
-  HeaderRow,
-  DataRow,
+const Core = ({
+  cellRenderer,
+  compulsoryStyleSeed,
+
   freezeColOffsetY,
   headerOffsetX,
+  scrollViewRef,
+  headerRowDataFrame,
+
+  accWidth,
+  columnKeys,
+  caseResult,
+
+  data,
   freezeRowNum,
   freezeColNum,
-  scrollViewRef,
-  data,
-  headerRowDataFrame,
-  columnKeys,
-  defaultWidth,
-  accWidth,
   mainContainerStyles,
-  caseResult,
 }: any) => {
   const headerRowComponentsArr = (keyType: string, hidden: boolean) =>
-    headerRowDataFrame.map((headerRowArr: string[], idx: number) => (
-      <HeaderRow
-        key={`freeze-row-${idx}-${keyType}`}
-        headerRowData={headerRowArr}
-        rowOrder={idx}
+    headerRowDataFrame.map((headerRowArr: string[], rowOrder: number) => (
+      <Row
+        key={`freeze-row-${rowOrder}-${keyType}`}
+        rowType="header"
+        headerOffsetX={headerOffsetX}
+        dataArr={headerRowArr}
+        rowOrder={rowOrder}
         hidden={hidden}
+        compulsoryStyleSeed={compulsoryStyleSeed}
       />
     ));
 
   const dataRowComponentsArr = (keyType: string, hidden: boolean) =>
     data
       .slice(freezeRowNum ? freezeRowNum - 1 : 0)
-      .map((item: any, idx: number) => (
-        <DataRow
+      .map((dataItem: any, rowOrder: number) => (
+        <Row
           key={`data-row-${
-            freezeRowNum ? idx + (freezeRowNum - 1) : idx
+            freezeRowNum ? rowOrder + (freezeRowNum - 1) : rowOrder
           }-${keyType}`}
-          columnKeys={columnKeys}
-          dataItem={sliceDataObj(item, columnKeys)}
-          rowOrder={freezeRowNum ? idx + (freezeRowNum - 1) : idx}
+          rowType="data"
+          dataArr={columnKeys}
+          cellRenderer={cellRenderer}
+          dataItem={sliceDataObj(dataItem, columnKeys)}
+          rowOrder={rowOrder}
           hidden={hidden}
+          compulsoryStyleSeed={compulsoryStyleSeed}
         />
       ));
 
@@ -101,7 +111,7 @@ const FreezableCore = ({
           ref={scrollViewRef}
           onContentSizeChange={() =>
             scrollViewRef.current?.scrollTo({
-              x: defaultWidth,
+              x: accWidth,
               y: 0,
               animated: false,
             })
@@ -149,4 +159,4 @@ const FreezableCore = ({
   );
 };
 
-export default FreezableCore;
+export default Core;

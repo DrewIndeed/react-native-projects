@@ -1,38 +1,10 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { generateCompulsoryStyles } from './utils';
 
-const Cell = ({
-  style,
-  innerBorderWidth,
-  hidden,
-  freezeColNum,
-  widths,
-  defaultWidth,
-  firstRowStyles,
-  firstColStyles,
-  bodyStyles,
-  cellType,
-  rowOrder,
-  idx,
-  content,
-}: any) => {
-  // ** compulsory style
-  const compulsoryStyle = generateCompulsoryStyles(
-    innerBorderWidth,
-    hidden,
-    freezeColNum,
-    widths,
-    defaultWidth,
-    firstRowStyles,
-    firstColStyles,
-    bodyStyles,
-    cellType === 'header' ? false : true
-  )(rowOrder, idx);
-
+const Cell = ({ compulsoryStyleArr, content, style }: any) => {
   // ** render content
   return (
-    <View style={[...compulsoryStyle]}>
+    <View style={[...compulsoryStyleArr, style]}>
       <Text>{content}</Text>
     </View>
   );

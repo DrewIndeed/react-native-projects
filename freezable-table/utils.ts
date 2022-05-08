@@ -23,16 +23,21 @@ export function sliceDataObj(targetObj: object, columnKeys: string[]) {
 
 // generate compulsory style based on conditioms
 export const generateCompulsoryStyles = (
-  innerBorderWidth: any,
+  compulsoryStyleSeed: any,
   hidden: any,
-  freezeColNum: any,
-  widths: any,
-  defaultWidth: any,
-  firstRowStyles: any,
-  firstColStyles: any,
-  bodyStyles: any,
   isDataRow: any
 ) => {
+  // ! destructure seed
+  const {
+    freezeColNum,
+    innerBorderWidth,
+    defaultWidth,
+    firstRowStyles,
+    firstColStyles,
+    bodyStyles,
+    widths,
+  } = compulsoryStyleSeed;
+
   // ! compulsory style containers for first and following cells
   let commonCellsStyles: any = {
     borderWidth: innerBorderWidth || 1,

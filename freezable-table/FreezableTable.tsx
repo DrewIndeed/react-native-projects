@@ -1,16 +1,13 @@
 import React, { useRef } from 'react';
-import { Animated, Text, View, ScrollView } from 'react-native';
+import { Animated, ScrollView } from 'react-native';
 import {
   capitalizeWords,
   sliceDataObj,
   allErrorHandling,
   determineCase,
-  generateCompulsoryStyles,
 } from './utils';
 import { Column, FreezableTableProps } from './types';
-import { FreezableTableMainSheet } from './stylesheets';
-import FreezableCore from './FreezableCore';
-import Cell from './Cell';
+import Core from './Core';
 
 export default function FreezableTable(props: FreezableTableProps) {
   // ! destructure Props object
@@ -21,7 +18,7 @@ export default function FreezableTable(props: FreezableTableProps) {
     cellRenderer,
     freezeColNum,
     freezeRowNum,
-    mainContainerStyles,
+    // mainContainerStyles,
     firstRowStyles,
     firstColStyles,
     bodyStyles,
@@ -102,143 +99,33 @@ export default function FreezableTable(props: FreezableTableProps) {
     }
   }
 
-  // ! header row component
-  const HeaderRow = ({
-    headerRowData,
-
-    rowOrder,
-    hidden,
-  }: {
-    headerRowData: string[];
-    rowOrder: number;
-    hidden: boolean;
-  }) => {
-    return (
-      <Animated.View
-        style={[
-          FreezableTableMainSheet.headerRowContainer,
-          !hidden && {
-            transform: [
-              {
-                translateX: Animated.multiply(
-                  headerOffsetX,
-                  new Animated.Value(-1)
-                ),
-              },
-            ],
-          },
-        ]}
-      >
-        {headerRowData.map((content: string, idx: number) => (
-          <Cell
-            key={`header-row-${rowOrder}-cell-${idx}`}
-            innerBorderWidth={innerBorderWidth}
-            hidden={hidden}
-            freezeColNum={freezeColNum}
-            widths={widths}
-            defaultWidth={defaultWidth}
-            firstRowStyles={firstRowStyles}
-            firstColStyles={firstColStyles}
-            bodyStyles={bodyStyles}
-            cellType="header"
-            rowOrder={rowOrder}
-            idx={idx}
-            content={content}
-          />
-        ))}
-      </Animated.View>
-    );
-  };
-
-  // ! data row component
-  const DataRow = ({
-    columnKeys,
-    dataItem,
-
-    rowOrder,
-    hidden,
-  }: {
-    columnKeys: string[];
-    dataItem: { [key: string]: any };
-    rowOrder: number;
-    hidden?: boolean;
-  }) => {
-    return (
-      <View style={{ flexDirection: 'row' }}>
-        {columnKeys.map((key: string, idx: number) => {
-          // ** compulsory style
-          const compulsoryStyleArr = generateCompulsoryStyles(
-            innerBorderWidth,
-            hidden,
-            freezeColNum,
-            widths,
-            defaultWidth,
-            firstRowStyles,
-            firstColStyles,
-            bodyStyles,
-            true
-          )(rowOrder, idx);
-
-          // ** if cellRenderer is specified and cellRenderer returns a Component
-          let cellValue = null;
-          if (cellRenderer) {
-            // ** get return value from cellRenderer
-            cellValue = cellRenderer(key, dataItem[key], dataItem);
-
-            // ** check for Component
-            if (cellValue['$$typeof']) {
-              return React.cloneElement(cellValue, {
-                ...cellValue.props,
-                style: [...compulsoryStyleArr, cellValue.props.style],
-                key: `data-row-${rowOrder}-cell-${idx}`,
-              });
-            }
-          }
-
-          // ** if cellRenderer is not null, render based on cellRenderer value, 
-          // ** otherwise, data from source
-          return (
-            <Cell
-              key={`data-row-${rowOrder}-cell-${idx}`}
-              innerBorderWidth={innerBorderWidth}
-              hidden={hidden}
-              freezeColNum={freezeColNum}
-              widths={widths}
-              defaultWidth={defaultWidth}
-              firstRowStyles={firstRowStyles}
-              firstColStyles={firstColStyles}
-              bodyStyles={bodyStyles}
-              cellType="data"
-              rowOrder={rowOrder}
-              idx={idx}
-              content={cellValue ? cellValue : dataItem[key]}
-            />
-          );
-        })}
-      </View>
-    );
+  // ! compulsory style seed objects
+  const compulsoryStyleSeed = {
+    freezeColNum,
+    innerBorderWidth,
+    defaultWidth,
+    firstRowStyles,
+    firstColStyles,
+    bodyStyles,
+    widths,
   };
 
   // ! pick what to render based on freezeColNum and freezeRowNum values
   const caseResult = determineCase(freezeRowNum, freezeColNum);
 
-  // ! FreezableCore Component with properly chosen parent
+  // ! Core Component with properly chosen parent
   return (
-    <FreezableCore
-      HeaderRow={HeaderRow}
-      DataRow={DataRow}
+    <Core
+      cellRenderer={cellRenderer}
+      compulsoryStyleSeed={compulsoryStyleSeed}
       freezeColOffsetY={freezeColOffsetY}
       headerOffsetX={headerOffsetX}
-      freezeRowNum={freezeRowNum}
-      freezeColNum={freezeColNum}
       scrollViewRef={scrollViewRef}
-      data={data}
       headerRowDataFrame={headerRowDataFrame}
-      columnKeys={columnKeys}
-      defaultWidth={defaultWidth}
       accWidth={accWidth}
-      mainContainerStyles={mainContainerStyles}
+      columnKeys={columnKeys}
       caseResult={caseResult}
+      {...props}
     />
   );
 }
