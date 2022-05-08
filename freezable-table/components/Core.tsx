@@ -1,9 +1,8 @@
 import React from 'react';
 import { Animated, View, ScrollView } from 'react-native';
-import { sliceDataObj } from './utils';
-import { FreezableTableMainSheet } from './stylesheets';
+import { sliceDataObj } from '../utils';
+import { FreezableTableMainSheet } from '../stylesheets';
 import CoreWrapper from './CoreWrapper';
-import RowWrapper from './RowWrapper';
 import Row from './Row';
 
 const Core = ({

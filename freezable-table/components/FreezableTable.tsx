@@ -5,8 +5,8 @@ import {
   sliceDataObj,
   allErrorHandling,
   determineCase,
-} from './utils';
-import { Column, FreezableTableProps } from './types';
+} from '../utils';
+import { Column, FreezableTableProps } from '../types';
 import Core from './Core';
 
 export default function FreezableTable(props: FreezableTableProps) {

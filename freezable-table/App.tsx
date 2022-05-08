@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text } from 'react-native';
 import data from './data';
-import FreezableTable from './FreezableTable';
+import FreezableTable from './components/FreezableTable';
 
 export default function App() {
   return (
@@ -30,13 +30,13 @@ export default function App() {
             key: 'country',
           },
         ]}
-        cellRenderer={(key, value, row) => (
+        cellRenderer={(key: string, value: any, row: any) => (
           <View style={{ borderColor: '#000' }}>
             <Text style={{ textAlign: 'center' }}>{value}</Text>
           </View>
         )}
         
-        // freezeColNum={2}
+        freezeColNum={1}
         // freezeRowNum={4}
 
         mainContainerStyles={{

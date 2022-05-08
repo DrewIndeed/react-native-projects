@@ -1,9 +1,9 @@
 import React from 'react';
-import Cell from './Cell';
-import { generateCompulsoryStyles } from './utils';
-import RowWrapper from './RowWrapper';
-import { FreezableTableMainSheet } from './stylesheets';
 import { Animated } from 'react-native';
+import { generateCompulsoryStyles } from '../utils';
+import { FreezableTableMainSheet } from '../stylesheets';
+import RowWrapper from './RowWrapper';
+import Cell from './Cell';
 
 const Row = ({
   rowType,
