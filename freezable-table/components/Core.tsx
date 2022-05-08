@@ -45,9 +45,10 @@ const Core = ({
             freezeRowNum ? rowOrder + (freezeRowNum - 1) : rowOrder
           }-${keyType}`}
           rowType="data"
-          dataArr={columnKeys}
+          headerOffsetX={headerOffsetX}
           cellRenderer={cellRenderer}
           dataItem={sliceDataObj(dataItem, columnKeys)}
+          dataArr={columnKeys}
           rowOrder={rowOrder}
           hidden={hidden}
           compulsoryStyleSeed={compulsoryStyleSeed}
