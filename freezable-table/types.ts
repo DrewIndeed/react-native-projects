@@ -1,7 +1,10 @@
+export type MergeRequest = [number, number];
+
 export type Column = {
   width?: number;
-  header: string | number;
+  header?: string | number;
   key: string;
+  mergeRequests?: MergeRequest[];
 };
 
 export interface FreezableTableProps {

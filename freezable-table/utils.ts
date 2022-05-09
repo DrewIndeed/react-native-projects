@@ -1,4 +1,5 @@
 import { FreezableTableProps } from './types';
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import _ from 'lodash';
@@ -128,16 +129,33 @@ export function allErrorHandling({
         '[FreezableTable Error]: defaultWidth must be greater than 0'
       );
 
+    if (!columns)
+      throw new Error('[FreezableTable Error]: columns prop is required');
+
     if (columns.length <= 0)
       throw new Error(
         '[FreezableTable Error]: There must be at least 1 column specified'
       );
 
-    // ERROR HANDLING: freeze row and col number props
+    let invalidKey = '';
+    if (
+      !columns.every((colObj) => {
+        if (!Object.keys(data[0]).includes(colObj.key)) {
+          invalidKey = colObj.key;
+          return false;
+        }
+        return true;
+      })
+    )
+      console.warn(
+        `[FreezableTable Warning]: Detected a column key that does not exist in data: ${invalidKey}`
+      );
+
     if (
       freezeColNum &&
       (freezeColNum > Object.keys(data[0]).length + 1 || freezeColNum < 0)
     )
+      // ERROR HANDLING: freeze row and col number props
       throw new Error(
         '[FreezableTable Error]: Value must be greater or equal to 0 and less than data keys number for freezeColNum, otherwise leave blank with default value as 0'
       );
