@@ -62,11 +62,11 @@ const Row = ({
 
         return (
           <Cell
+            compulsoryStyleArr={compulsoryStyleArr}
             key={`${rowType}-row-${rowOrder}-cell-${idx}`}
             content={
               rowType === 'header' ? key : cellValue ? cellValue : dataItem[key]
             }
-            compulsoryStyleArr={compulsoryStyleArr}
           />
         );
       })}

@@ -1,4 +1,7 @@
 import { FreezableTableProps } from './types';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import _ from 'lodash';
 
 //capitalize all words of a targetStr.
 export function capitalizeWords(targetStr: string) {
@@ -20,6 +23,35 @@ export function sliceDataObj(targetObj: object, columnKeys: string[]) {
   // return new obj
   return filterObjContainer;
 }
+
+// filter our text related style
+export const getTextRelatedStyles = (styleObjsArr: any) => {
+  // supported styles array
+  const SUPPORTED_STYLES: string[] = [
+    'background',
+    'color',
+    'font',
+    'text',
+    'line',
+    'letter',
+  ].sort();
+
+  // merge function to merge array of objects
+  let merge = _.spread(_.partial(_.merge, {}));
+  let rawMergeStyleObj = merge(styleObjsArr);
+
+  // set the attributes that are no supported to null -> keep the ones that are relevant
+  Object.entries(rawMergeStyleObj).forEach((entry) => {
+    if (
+      SUPPORTED_STYLES.every((suppStyleKey) => !entry[0].includes(suppStyleKey))
+    ) {
+      rawMergeStyleObj[entry[0]] = null;
+    }
+  });
+
+  // return filtered style object
+  return rawMergeStyleObj;
+};
 
 // generate compulsory style based on conditioms
 export const generateCompulsoryStyles = (
@@ -65,6 +97,7 @@ export const generateCompulsoryStyles = (
       ? headerCellsStyles.firstCell.style
       : headerCellsStyles.otherCells.style,
     { width: widths[idx] || defaultWidth },
+
     !isDataRow && rowOrder === 0 && firstRowStyles,
     !isDataRow && rowOrder > 0 && idx === 0 && firstColStyles,
     !isDataRow && rowOrder > 0 && idx > 0 && bodyStyles,
@@ -175,6 +208,8 @@ export function allErrorHandling({
       // supported styles array for mainContainerStyles
       const SUPPORTED_STYLES: string[] = [
         'background',
+        'align',
+        'justify',
         'border',
         'color',
         'font',

@@ -38,16 +38,13 @@ export default function App() {
           )
           // value
         }
-
-        // freezeColNum={1}
-        // freezeRowNum={4}
-
+        freezeColNum={1}
+        freezeRowNum={4}
         mainContainerStyles={{
           marginVertical: 48,
           borderWidth: 1,
           flex: 1,
         }}
-        
         firstRowStyles={{
           backgroundColor: 'tomato',
         }}
@@ -56,6 +53,7 @@ export default function App() {
         }}
         bodyStyles={{
           backgroundColor: 'lightgreen',
+          textAlign: 'center',
         }}
 
         // capHeader={true}

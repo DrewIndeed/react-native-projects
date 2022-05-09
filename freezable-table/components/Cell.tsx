@@ -1,9 +1,21 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, TouchableHighlight } from 'react-native';
+import { getTextRelatedStyles } from '../utils';
 
-const Cell = ({ compulsoryStyleArr, content, style }: any) => {
+const Cell = ({ content, compulsoryStyleArr }: any) => {
+  // ** filtered compulsoryStyleArr
+  const filteredStylesObj = getTextRelatedStyles(compulsoryStyleArr);
+
   // ** render content
-  return <Text style={[...compulsoryStyleArr, style]}>{content}</Text>;
+  return (
+    <TouchableHighlight
+      underlayColor={filteredStylesObj.backgroundColor}
+      style={compulsoryStyleArr}
+      onPress={() => alert(content)}
+    >
+      <Text style={filteredStylesObj}>{content}</Text>
+    </TouchableHighlight>
+  );
 };
 
 export default Cell;
