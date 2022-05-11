@@ -24,9 +24,7 @@ const Core = ({
   freezeColNum,
   mainContainerStyles,
 }: any) => {
-
   console.log(headerRowDataFrame);
-  
   const headerRowComponentsArr = (keyType: string, hidden: boolean) =>
     headerRowDataFrame.map((headerRowArr: string[], rowOrder: number) => (
       <Row

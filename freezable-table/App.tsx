@@ -28,7 +28,7 @@ export default function App() {
             width: 175,
             header: 'Col 3',
             key: 'address',
-            mergeRequests: [[1, 3]],
+            mergeRequests: [[0, 2]],
           },
           {
             width: 175,
@@ -43,7 +43,7 @@ export default function App() {
           value
         }
         freezeColNum={1}
-        freezeRowNum={12}
+        // freezeRowNum={4}
         mainContainerStyles={{
           marginVertical: 48,
           borderWidth: 1,

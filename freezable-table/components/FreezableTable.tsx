@@ -38,11 +38,11 @@ export default function FreezableTable(props: FreezableTableProps) {
   const columnKeys: string[] = [];
   columns.forEach((col) => columnKeys.push(col.key));
 
-  // ! extract all merge requests from columns
-  const allMergeRequests: { [key: string]: MergeRequest[] | undefined } = {};
+  // ! extract all keys from columns
+  const mergeRequests: { [key: string]: MergeRequest[] | undefined } = {};
   columns.forEach((col) => {
-    if (col['mergeRequests'])
-      allMergeRequests[col.key] = col['mergeRequests'].map((rq) =>
+    if (col.hasOwnProperty('mergeRequests') && mergeRequests)
+      mergeRequests[col.key] = col.mergeRequests?.map((rq) =>
         _.range(rq[0], rq[1] + 1)
       );
   });
@@ -102,26 +102,13 @@ export default function FreezableTable(props: FreezableTableProps) {
   ];
 
   // ** adjust header row dataframe rendering based on freezeRowNum
-  // console.log('Right above header frame:', allMergeRequests);
-  // ! if freezeRowCol is specified and headerRowDataFrame is still of length of data and smaller
-  // ! why: prevent it from freezing above data length
-  if (freezeRowNum && headerRowDataFrame.length < data.length) {
-    // ** loop iteration = freezeRowNum - 1 -> to exclude the header row
-    for (let i = 1; i < freezeRowNum; i++) {
-      // ** slice received data item according to columnKeys length -> to prevent render spare col
-      const extraHeaderData: any = sliceDataObj(
-        data[headerRowDataFrame.length - 1],
-        columnKeys
+  if (freezeRowNum && headerRowDataFrame.length <= data.length - 1) {
+    for (let i = 0; i < freezeRowNum - 1; i++) {
+      const extraHeaderData: string[] = Object.values(
+        sliceDataObj(data[headerRowDataFrame.length - 1], columnKeys)
       );
 
-      // ** detect if a (freezed) header cell is a target for merging
-      const finalHeaderData = Object.keys(extraHeaderData).map((key) => {
-        if (allMergeRequests[key]?.flat(Infinity).includes(i)) return 'MERGED';
-        return extraHeaderData[key];
-      });
-
-      // ** append into headerRowDataFrame
-      headerRowDataFrame.push([...finalHeaderData]);
+      headerRowDataFrame.push([...extraHeaderData]);
     }
   }
 
@@ -150,7 +137,7 @@ export default function FreezableTable(props: FreezableTableProps) {
       headerRowDataFrame={headerRowDataFrame}
       accWidth={accWidth}
       columnKeys={columnKeys}
-      mergeRequests={allMergeRequests}
+      mergeRequests={mergeRequests}
       caseResult={caseResult}
       {...props}
     />

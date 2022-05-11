@@ -71,7 +71,7 @@ const Row = ({
               if (mergeRequests.hasOwnProperty(key)) {
                 for (let i = 0; i < mergeRequests[key].length; i++) {
                   if (mergeRequests[key][i].includes(rowOrder)) {
-                    return 'MERGED';
+                    return 'MERGED\nMERGED\nMERGED\nMERGED';
                   }
                 }
               }
