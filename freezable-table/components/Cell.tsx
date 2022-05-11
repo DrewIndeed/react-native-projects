@@ -11,9 +11,9 @@ const Cell = ({ content, compulsoryStyleArr }: any) => {
     <TouchableHighlight
       underlayColor={filteredStylesObj.backgroundColor}
       style={compulsoryStyleArr}
-      onPress={() => alert(content())}
+      onPress={() => alert(content)}
     >
-      <Text style={filteredStylesObj}>{content()}</Text>
+      <Text style={filteredStylesObj}>{content}</Text>
     </TouchableHighlight>
   );
 };

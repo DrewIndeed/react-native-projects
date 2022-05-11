@@ -12,54 +12,49 @@ export default function App() {
           {
             width: 120,
             header: 'Col 1',
-            key: 'name',
-            mergeRequests: [
-              [2, 4],
-              [10, 15],
-            ],
+            key: 'address',
           },
           {
             width: 120,
             header: 'Col 2',
-            key: 'country',
-            mergeRequests: [[5, 10]],
+            key: 'phone',
           },
           {
             width: 175,
             header: 'Col 3',
-            key: 'address',
-            mergeRequests: [[0, 2]],
+            key: 'name',
           },
           {
             width: 175,
             header: 'Col 4',
-            key: 'phone',
+            key: 'country',
           },
         ]}
-        cellRenderer={(key: string, value: any, row: any) =>
-          // <View style={{ borderColor: '#000' }}>
-          //   <Text style={{ textAlign: 'center' }}>{value}</Text>
-          // </View>
-          value
+        cellRenderer={
+          (key: string, value: any, row: any) => (
+            <View style={{ borderColor: '#000' }}>
+              <Text style={{ textAlign: 'center' }}>{value}</Text>
+            </View>
+          )
+          // value
         }
         freezeColNum={1}
-        // freezeRowNum={4}
+        freezeRowNum={4}
         mainContainerStyles={{
           marginVertical: 48,
           borderWidth: 1,
           flex: 1,
         }}
-        // firstRowStyles={{
-        //   backgroundColor: 'tomato',
-        // }}
-        // firstColStyles={{
-        //   backgroundColor: 'yellow',
-        //   textAlign: 'center',
-        // }}
-        // bodyStyles={{
-        //   backgroundColor: 'lightgreen',
-        //   textAlign: 'center',
-        // }}
+        firstRowStyles={{
+          backgroundColor: 'tomato',
+        }}
+        firstColStyles={{
+          backgroundColor: 'yellow',
+        }}
+        bodyStyles={{
+          backgroundColor: 'lightgreen',
+          textAlign: 'center',
+        }}
 
         // capHeader={true}
         // upperHeader={true}

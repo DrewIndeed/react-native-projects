@@ -16,7 +16,6 @@ const Core = ({
 
   accWidth,
   columnKeys,
-  mergeRequests,
   caseResult,
 
   data,
@@ -24,7 +23,6 @@ const Core = ({
   freezeColNum,
   mainContainerStyles,
 }: any) => {
-  console.log(headerRowDataFrame);
   const headerRowComponentsArr = (keyType: string, hidden: boolean) =>
     headerRowDataFrame.map((headerRowArr: string[], rowOrder: number) => (
       <Row
@@ -32,7 +30,6 @@ const Core = ({
         rowType="header"
         headerOffsetX={headerOffsetX}
         dataArr={headerRowArr}
-        mergeRequests={mergeRequests}
         rowOrder={rowOrder}
         hidden={hidden}
         compulsoryStyleSeed={compulsoryStyleSeed}
@@ -50,9 +47,8 @@ const Core = ({
           rowType="data"
           headerOffsetX={headerOffsetX}
           cellRenderer={cellRenderer}
-          dataArr={columnKeys}
           dataItem={sliceDataObj(dataItem, columnKeys)}
-          mergeRequests={mergeRequests}
+          dataArr={columnKeys}
           rowOrder={rowOrder}
           hidden={hidden}
           compulsoryStyleSeed={compulsoryStyleSeed}
@@ -122,7 +118,6 @@ const Core = ({
           }
           onScroll={(event) => {
             const curX = event.nativeEvent.contentOffset.x;
-
             if (curX - accWidth <= 0) {
               scrollViewRef.current?.scrollTo({
                 x: accWidth,
@@ -130,7 +125,6 @@ const Core = ({
                 animated: false,
               });
             }
-
             headerOffsetX.setValue(curX);
           }}
           decelerationRate={0.45}

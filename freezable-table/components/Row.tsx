@@ -11,7 +11,6 @@ const Row = ({
   cellRenderer,
   dataArr,
   dataItem,
-  mergeRequests,
   rowOrder,
   hidden,
   compulsoryStyleSeed,
@@ -46,13 +45,13 @@ const Row = ({
         )(rowOrder, idx);
 
         // ** if cellRenderer is specified and cellRenderer returns a Component
-        let cellValue: any = null;
+        let cellValue = null;
         if (cellRenderer) {
           // ** get return value from cellRenderer
           cellValue = cellRenderer(key, dataItem[key], dataItem);
 
           // ** check for Component
-          if (cellValue && cellValue['$$typeof']) {
+          if (cellValue['$$typeof']) {
             return React.cloneElement(cellValue, {
               ...cellValue.props,
               style: [...compulsoryStyleArr, cellValue.props.style],
@@ -65,20 +64,9 @@ const Row = ({
           <Cell
             compulsoryStyleArr={compulsoryStyleArr}
             key={`${rowType}-row-${rowOrder}-cell-${idx}`}
-            content={() => {
-              if (rowType === 'header') return key;
-
-              if (mergeRequests.hasOwnProperty(key)) {
-                for (let i = 0; i < mergeRequests[key].length; i++) {
-                  if (mergeRequests[key][i].includes(rowOrder)) {
-                    return 'MERGED\nMERGED\nMERGED\nMERGED';
-                  }
-                }
-              }
-
-              if (cellValue) return cellValue;
-              return dataItem[key];
-            }}
+            content={
+              rowType === 'header' ? key : cellValue ? cellValue : dataItem[key]
+            }
           />
         );
       })}

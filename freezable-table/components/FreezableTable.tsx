@@ -6,12 +6,8 @@ import {
   allErrorHandling,
   determineCase,
 } from '../utils';
-import { Column, FreezableTableProps, MergeRequest } from '../types';
+import { Column, FreezableTableProps } from '../types';
 import Core from './Core';
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import _ from 'lodash';
 
 export default function FreezableTable(props: FreezableTableProps) {
   // ! destructure Props object
@@ -36,16 +32,7 @@ export default function FreezableTable(props: FreezableTableProps) {
 
   // ! extract all keys from columns
   const columnKeys: string[] = [];
-  columns.forEach((col) => columnKeys.push(col.key));
-
-  // ! extract all keys from columns
-  const mergeRequests: { [key: string]: MergeRequest[] | undefined } = {};
-  columns.forEach((col) => {
-    if (col.hasOwnProperty('mergeRequests') && mergeRequests)
-      mergeRequests[col.key] = col.mergeRequests?.map((rq) =>
-        _.range(rq[0], rq[1] + 1)
-      );
-  });
+  columns.map((col) => columnKeys.push(col.key));
 
   // ! accumulate columns width values if freezeColNum is defined
   // ** default width tracker
@@ -137,7 +124,6 @@ export default function FreezableTable(props: FreezableTableProps) {
       headerRowDataFrame={headerRowDataFrame}
       accWidth={accWidth}
       columnKeys={columnKeys}
-      mergeRequests={mergeRequests}
       caseResult={caseResult}
       {...props}
     />
