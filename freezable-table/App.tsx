@@ -1,6 +1,6 @@
-import { View, StyleSheet, Text } from 'react-native';
-import data from './data';
+import { StyleSheet, View } from 'react-native';
 import FreezableTable from './components/FreezableTable';
+import data from './data';
 
 export default function App() {
   return (
@@ -18,11 +18,27 @@ export default function App() {
             width: 120,
             header: 'Col 2',
             key: 'phone',
+            mergeRequests: [
+              {
+                row: 2,
+                amount: 5,
+              },
+              {
+                row: 12,
+                amount: 3,
+              },
+            ],
           },
           {
             width: 175,
             header: 'Col 3',
             key: 'name',
+            mergeRequests: [
+              {
+                row: 4,
+                amount: 5,
+              },
+            ],
           },
           {
             width: 175,
@@ -30,16 +46,17 @@ export default function App() {
             key: 'country',
           },
         ]}
-        cellRenderer={
-          (key: string, value: any, row: any) => (
-            <View style={{ borderColor: '#000' }}>
-              <Text style={{ textAlign: 'center' }}>{value}</Text>
-            </View>
-          )
-          // value
+        cellRenderer={(key: string, value: any, row: any) =>
+          // (
+          //   <View style={{ borderColor: '#000' }}>
+          //     <Text style={{ textAlign: 'center' }}>{value}</Text>
+          //   </View>
+          // )
+          value
         }
         freezeColNum={1}
-        freezeRowNum={4}
+        freezeRowNum={0}
+        
         mainContainerStyles={{
           marginVertical: 48,
           borderWidth: 1,

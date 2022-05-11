@@ -1,7 +1,7 @@
-import { FreezableTableProps } from './types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import _ from 'lodash';
+import { FreezableTableProps } from './types';
 
 //capitalize all words of a targetStr.
 export function capitalizeWords(targetStr: string) {
@@ -51,6 +51,28 @@ export const getTextRelatedStyles = (styleObjsArr: any) => {
 
   // return filtered style object
   return rawMergeStyleObj;
+};
+
+export const readColMergeRequest = (colIdx: number, requestArr: any) => {
+  // generate coordinates from row and amount of merge cell
+  const _generateCoordinates = (
+    colIdx: number,
+    rowIdx: number,
+    amount: number
+  ) => {
+    const coordinateContainer = [];
+    for (let i = rowIdx; i <= rowIdx + amount; i++)
+      coordinateContainer.push([colIdx, i]);
+    return coordinateContainer;
+  };
+
+  const allCoorsOfCol: any = [];
+  requestArr.forEach((rq: any) => {
+    const coors = _generateCoordinates(colIdx, rq.row, rq.amount);
+    allCoorsOfCol.push(...coors);
+  });
+
+  return allCoorsOfCol;
 };
 
 // generate compulsory style based on conditioms

@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TouchableHighlight } from 'react-native';
 import { getTextRelatedStyles } from '../utils';
 
-const Cell = ({ content, compulsoryStyleArr }: any) => {
+const Cell = ({ content, compulsoryStyleArr, rowType, rowOrder, idx }: any) => {
   // ** filtered compulsoryStyleArr
   const filteredStylesObj = getTextRelatedStyles(compulsoryStyleArr);
 
@@ -11,7 +11,7 @@ const Cell = ({ content, compulsoryStyleArr }: any) => {
     <TouchableHighlight
       underlayColor={filteredStylesObj.backgroundColor}
       style={compulsoryStyleArr}
-      onPress={() => alert(content)}
+      onPress={() => alert(`${rowType} - (${idx},${rowOrder})`)}
     >
       <Text style={filteredStylesObj}>{content}</Text>
     </TouchableHighlight>

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Animated } from 'react-native';
-import { generateCompulsoryStyles } from '../utils';
+import { Animated, Text, Pressable } from 'react-native';
 import { FreezableTableMainSheet } from '../stylesheets';
-import RowWrapper from './RowWrapper';
+import { generateCompulsoryStyles } from '../utils';
 import Cell from './Cell';
+import RowWrapper from './RowWrapper';
 
 const Row = ({
   rowType,
@@ -11,9 +11,11 @@ const Row = ({
   cellRenderer,
   dataArr,
   dataItem,
+  freezeRowNum,
   rowOrder,
   hidden,
   compulsoryStyleSeed,
+  allMergeRequests,
 }: any) => {
   return (
     <RowWrapper
@@ -45,7 +47,7 @@ const Row = ({
         )(rowOrder, idx);
 
         // ** if cellRenderer is specified and cellRenderer returns a Component
-        let cellValue = null;
+        let cellValue: any = null;
         if (cellRenderer) {
           // ** get return value from cellRenderer
           cellValue = cellRenderer(key, dataItem[key], dataItem);
@@ -60,15 +62,42 @@ const Row = ({
           }
         }
 
-        return (
-          <Cell
-            compulsoryStyleArr={compulsoryStyleArr}
-            key={`${rowType}-row-${rowOrder}-cell-${idx}`}
-            content={
-              rowType === 'header' ? key : cellValue ? cellValue : dataItem[key]
-            }
-          />
-        );
+        if (
+          allMergeRequests.some(
+            (rq: any) =>
+              rq[0] === idx &&
+              rq[1] ===
+                (rowType === 'header' ? rowOrder : rowOrder + freezeRowNum)
+          )
+        ) {
+          return (
+            <Text
+              style={compulsoryStyleArr}
+              key={`${rowType}-row-${rowOrder}-cell-lord-${idx}`}
+            >
+              DREW_INDEED
+            </Text>
+          );
+        } else {
+          return (
+            <Cell
+              compulsoryStyleArr={compulsoryStyleArr}
+              key={`${rowType}-row-${rowOrder}-cell-${idx}`}
+              content={
+                rowType === 'header'
+                  ? key
+                  : cellValue
+                  ? cellValue
+                  : dataItem[key]
+              }
+              rowType={rowType}
+              rowOrder={
+                rowType === 'header' ? rowOrder : rowOrder + freezeRowNum
+              }
+              idx={idx}
+            />
+          );
+        }
       })}
     </RowWrapper>
   );

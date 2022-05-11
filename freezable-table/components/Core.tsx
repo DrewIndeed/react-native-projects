@@ -1,7 +1,7 @@
 import React from 'react';
-import { Animated, View, ScrollView } from 'react-native';
-import { sliceDataObj } from '../utils';
+import { Animated, ScrollView, View } from 'react-native';
 import { FreezableTableMainSheet } from '../stylesheets';
+import { sliceDataObj } from '../utils';
 import CoreWrapper from './CoreWrapper';
 import Row from './Row';
 
@@ -17,6 +17,7 @@ const Core = ({
   accWidth,
   columnKeys,
   caseResult,
+  allMergeRequests,
 
   data,
   freezeRowNum,
@@ -33,6 +34,7 @@ const Core = ({
         rowOrder={rowOrder}
         hidden={hidden}
         compulsoryStyleSeed={compulsoryStyleSeed}
+        allMergeRequests={allMergeRequests}
       />
     ));
 
@@ -48,10 +50,12 @@ const Core = ({
           headerOffsetX={headerOffsetX}
           cellRenderer={cellRenderer}
           dataItem={sliceDataObj(dataItem, columnKeys)}
+          freezeRowNum={freezeRowNum}
           dataArr={columnKeys}
           rowOrder={rowOrder}
           hidden={hidden}
           compulsoryStyleSeed={compulsoryStyleSeed}
+          allMergeRequests={allMergeRequests}
         />
       ));
 

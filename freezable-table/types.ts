@@ -2,6 +2,10 @@ export type Column = {
   width?: number;
   header: string | number;
   key: string;
+  mergeRequests?: {
+    row: number;
+    amount: number;
+  }[];
 };
 
 export interface FreezableTableProps {

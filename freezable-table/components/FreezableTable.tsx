@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import { Animated, ScrollView } from 'react-native';
-import {
-  capitalizeWords,
-  sliceDataObj,
-  allErrorHandling,
-  determineCase,
-} from '../utils';
 import { Column, FreezableTableProps } from '../types';
+import {
+  allErrorHandling,
+  capitalizeWords,
+  determineCase,
+  readColMergeRequest,
+  sliceDataObj,
+} from '../utils';
 import Core from './Core';
 
 export default function FreezableTable(props: FreezableTableProps) {
@@ -29,6 +30,15 @@ export default function FreezableTable(props: FreezableTableProps) {
 
   // ! error handling
   allErrorHandling(props);
+
+  // ! extract all merge request of all columns
+  const allMergeRequests: any = [];
+  columns.forEach((column, idx) => {
+    if (column.mergeRequests) {
+      const temp = readColMergeRequest(idx, column.mergeRequests);
+      allMergeRequests.push(...temp);
+    }
+  });
 
   // ! extract all keys from columns
   const columnKeys: string[] = [];
@@ -125,6 +135,7 @@ export default function FreezableTable(props: FreezableTableProps) {
       accWidth={accWidth}
       columnKeys={columnKeys}
       caseResult={caseResult}
+      allMergeRequests={allMergeRequests}
       {...props}
     />
   );
