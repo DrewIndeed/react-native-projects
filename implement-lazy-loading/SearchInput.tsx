@@ -14,7 +14,7 @@ export default function SearchInput({
     if (!text) return;
     onSubmit(text);
     setText('');
-  };
+  }
 
   return (
     <View style={styles.container}>

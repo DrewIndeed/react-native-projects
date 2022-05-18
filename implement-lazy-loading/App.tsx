@@ -9,7 +9,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
 // Search component
 import SearchInput from './SearchInput';
